@@ -9,18 +9,104 @@
     <li class="breadcrumb-item active">Tambah</li>
 @endsection
 
+@section('styles')
+    <style>
+        /* Card Header Enhancement - Digunakan pada layout utama tapi diduplikasi untuk konsistensi jika card di-render cepat */
+        .card-header {
+            /* Warna header khusus di dalam card ini akan di-override di markup,
+               tapi style ini memastikan konsistensi border dan padding */
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-bottom: 2px solid #f0f0f0 !important;
+            padding-top: 1.2rem;
+            padding-bottom: 1.2rem;
+        }
+
+        /* Smooth Page Load Animation (Untuk div.fade-in) */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Mengaplikasikan style pada card form */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Card Footer Styling */
+        .card-footer {
+            border-top: 1px solid #e9ecef;
+            background-color: #f8f9fa;
+        }
+
+        /* Grouping untuk memisahkan bagian form secara visual */
+        .form-group-title {
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+        }
+
+        /* Select styling for consistency */
+        .form-select:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        /* PERBAIKAN TOMBOL SIMPAN (Konsisten dengan DSRT.create) */
+        .card-footer .btn-primary {
+            color: white !important;
+            background-color: #007bff !important; 
+            opacity: 1 !important; 
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2) !important;
+        }
+
+        .card-footer .btn-primary:hover {
+            background-color: #0056b3 !important; 
+        }
+        
+        /* Style untuk Header Section di dalam Form (Override default card-header) */
+        .card .header-section {
+            padding: 1.25rem;
+            color: white;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+        }
+
+        /* Style untuk Alert Kuesioner */
+        .alert-light-border {
+            background-color: #f8f9fa;
+            border-left: 5px solid #ccc !important; /* Tambahkan border vertikal */
+        }
+    </style>
+@endsection
+
 @section('content')
-    <div class="card">
+    <div class="card shadow-sm fade-in">
         <form method="POST" action="{{ route('responden.store') }}" id="formResponden">
             @csrf
 
-            <!-- SECTION: Identitas Wilayah -->
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Identitas Wilayah</h5>
+            {{-- SECTION: Identitas Wilayah --}}
+            {{-- Mengganti card-header default dengan div yang bisa di-style --}}
+            <div class="header-section bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-geo-alt-fill me-2"></i> Identitas Wilayah</h5>
             </div>
+            
             <div class="card-body">
                 <div class="row g-3">
-                    <!-- Kecamatan -->
+                    {{-- Baris 1 --}}
                     <div class="col-md-6">
                         <label class="form-label">Kecamatan <span class="text-danger">*</span></label>
                         <select name="id_kec" id="kecamatan" class="form-select" required>
@@ -29,59 +115,73 @@
                                 <option value="{{ $kec->id_kec }}">{{ $kec->nama_kec }}</option>
                             @endforeach
                         </select>
+                        @error('id_kec')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <!-- Desa -->
                     <div class="col-md-6">
                         <label class="form-label">Desa <span class="text-danger">*</span></label>
                         <select name="id_desa" id="desa" class="form-select" required disabled>
                             <option value="">-- Pilih Kecamatan Dulu --</option>
                         </select>
+                        @error('id_desa')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
                     </div>
-
-                    <!-- Blok Sensus -->
+                    
+                    {{-- Baris 2 (G-3) --}}
                     <div class="col-md-4">
                         <label class="form-label">Blok Sensus <span class="text-danger">*</span></label>
                         <select name="id_bs" id="blok_sensus" class="form-select" required disabled>
                             <option value="">-- Pilih Desa Dulu --</option>
                         </select>
+                        @error('id_bs')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <!-- NKS -->
                     <div class="col-md-4">
                         <label class="form-label">Nomor Kode Sample (NKS)</label>
                         <select name="id_nks" id="nks" class="form-select" disabled>
                             <option value="">-- Pilih Blok Sensus Dulu --</option>
                         </select>
+                        @error('id_nks')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <!-- Nomor Urut RT -->
                     <div class="col-md-4">
                         <label class="form-label">Nomor Urut Rumah Tangga <span class="text-danger">*</span></label>
                         <select name="id_nurt" id="nurt" class="form-select" required disabled>
                             <option value="">-- Pilih NKS Dulu --</option>
                         </select>
+                        @error('id_nurt')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <!-- Nama Sample -->
                     <div class="col-md-12">
                         <label class="form-label">Nama Responden <span class="text-danger">*</span></label>
                         <input type="text" name="nama_sample" id="nama_sample" class="form-control"
                             placeholder="Masukkan nama responden" required>
+                        @error('nama_sample')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION: Kuesioner Ketenagakerjaan -->
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0"><i class="bi bi-clipboard-check"></i> Kuesioner Ketenagakerjaan</h5>
+            {{-- SECTION: Kuesioner Ketenagakerjaan --}}
+            <div class="header-section bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-clipboard-check me-2"></i> Kuesioner Ketenagakerjaan</h5>
             </div>
+            
             <div class="card-body">
                 <div class="row g-4">
 
-                    <!-- QUEST 1 (r7_1) -->
                     <div class="col-md-12">
-                        <div class="alert alert-light border">
+                        <div class="alert alert-light-border border">
                             <label class="form-label fw-bold">
                                 Quest 1: Dalam seminggu terakhir, apakah <span id="nama_quest_1"
                                     class="text-primary">(NAMA)</span> bekerja untuk memperoleh bayaran/upah/gaji yang
@@ -93,12 +193,14 @@
                                 <option value="Ya">Ya</option>
                                 <option value="Tidak">Tidak</option>
                             </select>
+                            @error('r7_1')
+                                <div class="text-danger small mt-2">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
-                    <!-- QUEST 2 (r7_2) -->
                     <div class="col-md-12" id="quest2_wrapper" style="display:none;">
-                        <div class="alert alert-light border">
+                        <div class="alert alert-light-border border">
                             <label class="form-label fw-bold">
                                 Quest 2: Dalam seminggu terakhir, apakah <span id="nama_quest_2"
                                     class="text-primary">(NAMA)</span> menjalankan usaha, bertani atau melakukan kegiatan
@@ -112,9 +214,8 @@
                         </div>
                     </div>
 
-                    <!-- QUEST 3 (r7_3) -->
                     <div class="col-md-12" id="quest3_wrapper" style="display:none;">
-                        <div class="alert alert-light border">
+                        <div class="alert alert-light-border border">
                             <label class="form-label fw-bold">
                                 Quest 3: Dalam seminggu terakhir, apakah <span id="nama_quest_3"
                                     class="text-primary">(NAMA)</span> membantu kegiatan usaha atau pekerjaan
@@ -128,9 +229,8 @@
                         </div>
                     </div>
 
-                    <!-- QUEST 4 (r8_1) -->
                     <div class="col-md-12" id="quest4_wrapper" style="display:none;">
-                        <div class="alert alert-light border">
+                        <div class="alert alert-light-border border">
                             <label class="form-label fw-bold">
                                 Quest 4: Apakah <span id="nama_quest_4" class="text-primary">(NAMA)</span> sebenarnya
                                 memiliki pekerjaan/kegiatan usaha, tetapi seminggu terakhir sedang tidak bekerja/tidak
@@ -144,7 +244,6 @@
                         </div>
                     </div>
 
-                    <!-- QUEST 5 (r9_1) - HANYA UNTUK BEKERJA -->
                     <div class="col-md-12" id="quest5_wrapper" style="display:none;">
                         <div class="alert alert-info border">
                             <label class="form-label fw-bold">
@@ -164,7 +263,6 @@
                         </div>
                     </div>
 
-                    <!-- QUEST 6 (r9_3) - HANYA UNTUK BEKERJA -->
                     <div class="col-md-12" id="quest6_wrapper" style="display:none;">
                         <div class="alert alert-info border">
                             <label class="form-label fw-bold">
@@ -183,7 +281,6 @@
                         </div>
                     </div>
 
-                    <!-- QUEST 7 (r20_1) - HANYA UNTUK PENGANGGURAN -->
                     <div class="col-md-12" id="quest7_wrapper" style="display:none;">
                         <div class="alert alert-warning border">
                             <label class="form-label fw-bold">
@@ -198,7 +295,6 @@
                         </div>
                     </div>
 
-                    <!-- QUEST 8 (r20_2) - HANYA UNTUK PENGANGGURAN -->
                     <div class="col-md-12" id="quest8_wrapper" style="display:none;">
                         <div class="alert alert-warning border">
                             <label class="form-label fw-bold">
@@ -213,7 +309,6 @@
                         </div>
                     </div>
 
-                    <!-- QUEST 9 (r20_4) - HANYA UNTUK PENGANGGURAN -->
                     <div class="col-md-12" id="quest9_wrapper" style="display:none;">
                         <div class="alert alert-warning border">
                             <label class="form-label fw-bold">
@@ -241,9 +336,9 @@
                 </div>
             </div>
 
-            <!-- Footer -->
+            {{-- Footer --}}
             <div class="card-footer text-end">
-                <a href="{{ route('responden.index') }}" class="btn btn-secondary">
+                <a href="{{ route('responden.index') }}" class="btn btn-secondary me-2">
                     <i class="bi bi-x-circle"></i> Batal
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -257,16 +352,50 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Logic Animasi Fade-in
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            // Observe all fade-in elements
+            document.querySelectorAll('.fade-in').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease-out';
+                observer.observe(el);
+            });
+            
+            // Memastikan fungsi showLoading/hideLoading global tersedia jika form disubmit
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    if (window.showLoading) {
+                        window.showLoading();
+                    }
+                });
+            }
+
+
             // ===== DROPDOWN DINAMIS =====
+
+            const desaSelect = document.getElementById('desa');
+            const blokSensusSelect = document.getElementById('blok_sensus');
+            const nksSelect = document.getElementById('nks');
+            const nurtSelect = document.getElementById('nurt');
 
             // 1. Kecamatan -> Desa
             document.getElementById('kecamatan').addEventListener('change', function() {
                 const idKec = this.value;
-                const desaSelect = document.getElementById('desa');
-                const blokSensusSelect = document.getElementById('blok_sensus');
-                const nksSelect = document.getElementById('nks');
-                const nurtSelect = document.getElementById('nurt');
-
+                
+                // Reset semua turunan
                 desaSelect.innerHTML = '<option value="">-- Loading... --</option>';
                 desaSelect.disabled = true;
                 blokSensusSelect.innerHTML = '<option value="">-- Pilih Desa Dulu --</option>';
@@ -298,10 +427,8 @@
             // 2. Desa -> Blok Sensus
             document.getElementById('desa').addEventListener('change', function() {
                 const idDesa = this.value;
-                const blokSensusSelect = document.getElementById('blok_sensus');
-                const nksSelect = document.getElementById('nks');
-                const nurtSelect = document.getElementById('nurt');
 
+                // Reset turunan
                 blokSensusSelect.innerHTML = '<option value="">-- Loading... --</option>';
                 blokSensusSelect.disabled = true;
                 nksSelect.innerHTML = '<option value="">-- Pilih Blok Sensus Dulu --</option>';
@@ -332,9 +459,8 @@
             // 3. Blok Sensus -> NKS
             document.getElementById('blok_sensus').addEventListener('change', function() {
                 const idBs = this.value;
-                const nksSelect = document.getElementById('nks');
-                const nurtSelect = document.getElementById('nurt');
 
+                // Reset turunan
                 nksSelect.innerHTML = '<option value="">-- Loading... --</option>';
                 nksSelect.disabled = true;
                 nurtSelect.innerHTML = '<option value="">-- Pilih NKS Dulu --</option>';
@@ -362,8 +488,8 @@
             // 4. NKS -> Nurt
             document.getElementById('nks').addEventListener('change', function() {
                 const idNks = this.value;
-                const nurtSelect = document.getElementById('nurt');
 
+                // Reset turunan
                 nurtSelect.innerHTML = '<option value="">-- Loading... --</option>';
                 nurtSelect.disabled = true;
 
@@ -372,7 +498,7 @@
                         .then(response => response.json())
                         .then(data => {
                             nurtSelect.innerHTML =
-                            '<option value="">-- Pilih Nomor Urut RT --</option>';
+                                '<option value="">-- Pilih Nomor Urut RT --</option>';
                             if (data.length > 0) {
                                 data.forEach(nurt => {
                                     const option = document.createElement('option');
@@ -409,36 +535,45 @@
             const r20_2 = document.getElementById('r20_2');
             const r20_4 = document.getElementById('r20_4');
 
-            // Fungsi: Tampilkan Quest 5-6 DAN Quest 7 (BEKERJA)
-            function showBekerjaQuests() {
-                // Show Quest 5-6 (detail pekerjaan)
-                document.getElementById('quest5_wrapper').style.display = 'block';
-                document.getElementById('quest6_wrapper').style.display = 'block';
-                r9_1.disabled = false;
-                r9_3.disabled = false;
+            function resetAllQuests() {
+                ['quest2_wrapper', 'quest3_wrapper', 'quest4_wrapper', 'quest5_wrapper',
+                    'quest6_wrapper', 'quest7_wrapper', 'quest8_wrapper', 'quest9_wrapper'
+                ].forEach(id => {
+                    document.getElementById(id).style.display = 'none';
+                });
 
-                // ✅ PERBAIKAN: Show Quest 7 juga (untuk yang bekerja tapi mau cari tambahan)
-                document.getElementById('quest7_wrapper').style.display = 'block';
-                r20_1.disabled = false;
-
-                // Quest 8 & 9 masih hidden, menunggu jawaban Quest 7
-                document.getElementById('quest8_wrapper').style.display = 'none';
-                document.getElementById('quest9_wrapper').style.display = 'none';
-                r20_2.disabled = true;
-                r20_2.value = '';
-                r20_4.disabled = true;
-                r20_4.value = '';
+                r7_2.disabled = true; r7_2.value = '';
+                r7_3.disabled = true; r7_3.value = '';
+                r8_1.disabled = true; r8_1.value = '';
+                r9_1.disabled = true; r9_1.value = '';
+                r9_3.disabled = true; r9_3.value = '';
+                r20_1.disabled = true; r20_1.value = '';
+                r20_2.disabled = true; r20_2.value = '';
+                r20_4.disabled = true; r20_4.value = '';
             }
 
-            // Fungsi: Tampilkan Quest 7 saja (PENGANGGURAN)
+            function showBekerjaQuests() {
+                // Show Quest 5-6 (detail pekerjaan) dan Quest 7 (mencari tambahan)
+                document.getElementById('quest5_wrapper').style.display = 'block';
+                document.getElementById('quest6_wrapper').style.display = 'block';
+                document.getElementById('quest7_wrapper').style.display = 'block';
+                r9_1.disabled = false;
+                r9_3.disabled = false;
+                r20_1.disabled = false;
+
+                // Pastikan Quest 8 & 9 di-reset dan disembunyikan
+                document.getElementById('quest8_wrapper').style.display = 'none';
+                document.getElementById('quest9_wrapper').style.display = 'none';
+                r20_2.disabled = true; r20_2.value = '';
+                r20_4.disabled = true; r20_4.value = '';
+            }
+
             function showPengangguranQuests() {
                 // Hide Quest 5-6
                 document.getElementById('quest5_wrapper').style.display = 'none';
                 document.getElementById('quest6_wrapper').style.display = 'none';
-                r9_1.disabled = true;
-                r9_1.value = '';
-                r9_3.disabled = true;
-                r9_3.value = '';
+                r9_1.disabled = true; r9_1.value = '';
+                r9_3.disabled = true; r9_3.value = '';
 
                 // Show Quest 7
                 document.getElementById('quest7_wrapper').style.display = 'block';
@@ -447,153 +582,70 @@
                 // Quest 8 & 9 masih hidden, menunggu jawaban Quest 7
                 document.getElementById('quest8_wrapper').style.display = 'none';
                 document.getElementById('quest9_wrapper').style.display = 'none';
-                r20_2.disabled = true;
-                r20_2.value = '';
-                r20_4.disabled = true;
-                r20_4.value = '';
+                r20_2.disabled = true; r20_2.value = '';
+                r20_4.disabled = true; r20_4.value = '';
             }
-
-            // ===== QUEST 1 LOGIC =====
+            
+            // QUEST 1 LOGIC
             r7_1.addEventListener('change', function() {
-                // Reset Quest 2-9 display dan disable
-                ['quest2_wrapper', 'quest3_wrapper', 'quest4_wrapper', 'quest5_wrapper',
-                    'quest6_wrapper', 'quest7_wrapper', 'quest8_wrapper', 'quest9_wrapper'
-                ].forEach(id => {
-                    document.getElementById(id).style.display = 'none';
-                });
-
-                // Reset fields
-                r7_2.disabled = true;
-                r7_2.value = '';
-                r7_3.disabled = true;
-                r7_3.value = '';
-                r8_1.disabled = true;
-                r8_1.value = '';
-                r9_1.disabled = true;
-                r9_1.value = '';
-                r9_3.disabled = true;
-                r9_3.value = '';
-                r20_1.disabled = true;
-                r20_1.value = '';
-                r20_2.disabled = true;
-                r20_2.value = '';
-                r20_4.disabled = true;
-                r20_4.value = '';
+                resetAllQuests();
 
                 if (this.value === 'Ya') {
-                    // BEKERJA - Skip Quest 2-4, show Quest 5-6 DAN Quest 7
                     showBekerjaQuests();
                 } else if (this.value === 'Tidak') {
-                    // Lanjut ke Quest 2
                     document.getElementById('quest2_wrapper').style.display = 'block';
                     r7_2.disabled = false;
                 }
             });
 
-            // ===== QUEST 2 LOGIC =====
+            // QUEST 2 LOGIC
             r7_2.addEventListener('change', function() {
-                // Reset Quest 3-9
-                ['quest3_wrapper', 'quest4_wrapper', 'quest5_wrapper',
-                    'quest6_wrapper', 'quest7_wrapper', 'quest8_wrapper', 'quest9_wrapper'
-                ].forEach(id => {
-                    document.getElementById(id).style.display = 'none';
-                });
-
-                r7_3.disabled = true;
-                r7_3.value = '';
-                r8_1.disabled = true;
-                r8_1.value = '';
-                r9_1.disabled = true;
-                r9_1.value = '';
-                r9_3.disabled = true;
-                r9_3.value = '';
-                r20_1.disabled = true;
-                r20_1.value = '';
-                r20_2.disabled = true;
-                r20_2.value = '';
-                r20_4.disabled = true;
-                r20_4.value = '';
+                resetAllQuests();
+                document.getElementById('quest2_wrapper').style.display = 'block'; // Keep Q2 visible
 
                 if (this.value === 'Ya') {
-                    // BEKERJA - Skip Quest 3-4, show Quest 5-6 DAN Quest 7
                     showBekerjaQuests();
                 } else if (this.value === 'Tidak') {
-                    // Lanjut ke Quest 3
                     document.getElementById('quest3_wrapper').style.display = 'block';
                     r7_3.disabled = false;
                 }
             });
 
-            // ===== QUEST 3 LOGIC =====
+            // QUEST 3 LOGIC
             r7_3.addEventListener('change', function() {
-                // Reset Quest 4-9
-                ['quest4_wrapper', 'quest5_wrapper', 'quest6_wrapper',
-                    'quest7_wrapper', 'quest8_wrapper', 'quest9_wrapper'
-                ].forEach(id => {
-                    document.getElementById(id).style.display = 'none';
-                });
-
-                r8_1.disabled = true;
-                r8_1.value = '';
-                r9_1.disabled = true;
-                r9_1.value = '';
-                r9_3.disabled = true;
-                r9_3.value = '';
-                r20_1.disabled = true;
-                r20_1.value = '';
-                r20_2.disabled = true;
-                r20_2.value = '';
-                r20_4.disabled = true;
-                r20_4.value = '';
+                resetAllQuests();
+                document.getElementById('quest2_wrapper').style.display = 'block'; // Keep Q2 visible
+                document.getElementById('quest3_wrapper').style.display = 'block'; // Keep Q3 visible
 
                 if (this.value === 'Ya') {
-                    // BEKERJA - Skip Quest 4, show Quest 5-6 DAN Quest 7
                     showBekerjaQuests();
                 } else if (this.value === 'Tidak') {
-                    // Lanjut ke Quest 4
                     document.getElementById('quest4_wrapper').style.display = 'block';
                     r8_1.disabled = false;
                 }
             });
 
-            // ===== QUEST 4 LOGIC =====
+            // QUEST 4 LOGIC
             r8_1.addEventListener('change', function() {
-                // Reset Quest 5-9
-                ['quest5_wrapper', 'quest6_wrapper', 'quest7_wrapper',
-                    'quest8_wrapper', 'quest9_wrapper'
-                ].forEach(id => {
-                    document.getElementById(id).style.display = 'none';
-                });
-
-                r9_1.disabled = true;
-                r9_1.value = '';
-                r9_3.disabled = true;
-                r9_3.value = '';
-                r20_1.disabled = true;
-                r20_1.value = '';
-                r20_2.disabled = true;
-                r20_2.value = '';
-                r20_4.disabled = true;
-                r20_4.value = '';
+                resetAllQuests();
+                document.getElementById('quest2_wrapper').style.display = 'block'; 
+                document.getElementById('quest3_wrapper').style.display = 'block';
+                document.getElementById('quest4_wrapper').style.display = 'block';
 
                 if (this.value === 'Ya') {
-                    // BEKERJA - show Quest 5-6 DAN Quest 7
                     showBekerjaQuests();
                 } else if (this.value === 'Tidak') {
-                    // PENGANGGURAN - Quest 1-4 semua "Tidak", show Quest 7
                     showPengangguranQuests();
                 }
             });
 
-            // ===== QUEST 7 LOGIC (r20_1) =====
+            // QUEST 7 LOGIC (r20_1) - Mencari pekerjaan?
             r20_1.addEventListener('change', function() {
                 // Reset Quest 8 & 9
                 document.getElementById('quest8_wrapper').style.display = 'none';
                 document.getElementById('quest9_wrapper').style.display = 'none';
-                r20_2.disabled = true;
-                r20_2.value = '';
-                r20_4.disabled = true;
-                r20_4.value = '';
+                r20_2.disabled = true; r20_2.value = '';
+                r20_4.disabled = true; r20_4.value = '';
 
                 // Tampilkan Quest 8 setelah Quest 7 dijawab (Ya atau Tidak)
                 if (this.value === 'Ya' || this.value === 'Tidak') {
@@ -602,34 +654,25 @@
                 }
             });
 
-            // ===== QUEST 8 LOGIC (r20_2) =====
+            // QUEST 8 LOGIC (r20_2) - Mempersiapkan usaha?
             r20_2.addEventListener('change', function() {
                 const q7Value = r20_1.value;
                 const q8Value = this.value;
 
                 // Reset Quest 9
                 document.getElementById('quest9_wrapper').style.display = 'none';
-                r20_4.disabled = true;
-                r20_4.value = '';
+                r20_4.disabled = true; r20_4.value = '';
 
-                // LOGIC QUEST 9:
-                // 1. Jika Q7=Ya DAN Q8=Ya → Q9 TIDAK tampil
-                // 2. Jika Q7=Ya DAN Q8=Tidak → Q9 tampil
-                // 3. Jika Q7=Tidak DAN Q8=Tidak → Q9 tampil
-                // 4. Jika Q7=Tidak DAN Q8=Ya → Q9 tampil
-
+                // LOGIC QUEST 9 (Hanya tampil jika Q7=Ya AND Q8=Tidak) OR (Q7=Tidak AND Q8=Tidak) OR (Q7=Tidak AND Q8=Ya)
                 if (q7Value === 'Ya' && q8Value === 'Ya') {
-                    // Quest 9 TIDAK tampil (sudah dapat pekerjaan dan mempersiapkan usaha)
+                    // Q9 TIDAK tampil (Sudah mencari pekerjaan dan sudah mempersiapkan usaha)
                     document.getElementById('quest9_wrapper').style.display = 'none';
-                    r20_4.disabled = true;
-                    r20_4.value = '';
-                } else {
-                    // Selain kondisi di atas, Quest 9 tampil
+                } else if (q7Value === 'Tidak' || q8Value === 'Tidak') {
+                    // Q9 tampil (Kondisi lain di mana tidak ada pekerjaan/usaha yang pasti)
                     document.getElementById('quest9_wrapper').style.display = 'block';
                     r20_4.disabled = false;
                 }
             });
-
         });
     </script>
 @endsection

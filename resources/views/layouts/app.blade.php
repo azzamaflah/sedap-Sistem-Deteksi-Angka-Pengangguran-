@@ -7,6 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link rel="shortcut icon" href="{{ asset('logov.png') }}" type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
         content="
@@ -39,24 +43,33 @@
         integrity="sha512-D1liES3uvDpPrgk7vXR/hR/sukGn7EtDWEyvpdLsyalQYq6v6YUsTUJmku7B4rcuQ11hMJVJl2OUhduGTNqYOQ=="
         crossorigin="anonymous">
 
-    <!-- Custom CSS -->
-    <link href="{{ asset('css/app.css') }}" <!-- Additional Styles -->
+
     @yield('styles')
 
     <!-- Main Layout Styles -->
     <style>
         :root {
-            --primary-color: #0d6efd;
-            --secondary-color: #6c757d;
-            --success-color: #198754;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #0dcaf0;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
             --sidebar-width: 280px;
-            --sidebar-collapsed-width: 70px;
-            --header-height: 60px;
+            --sidebar-collapsed-width: 75px;
+
+            /* Warna Tema Terang */
+            --sidebar-bg: #ffffff;
+            --sidebar-text: #334155;
+            /* Teks gelap */
+            --sidebar-text-muted: #64748b;
+            --sidebar-hover: #f1f5f9;
+            /* Hover abu-abu muda */
+            --sidebar-active: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            /* Active tetap ungu */
+            --sidebar-border: #e2e8f0;
+            /* Border abu-abu */
+            --sidebar-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --header-height: 80px;
+
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --transition-speed: 0.3s;
+            --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -89,7 +102,7 @@
             z-index: 1000;
         }
 
-        .sidebar-container.collapsed {
+        .sidebar-container:has(> #mainSidebar.collapsed) {
             width: var(--sidebar-collapsed-width);
             min-width: var(--sidebar-collapsed-width);
         }
@@ -206,17 +219,6 @@
             transition: all 0.3s ease;
         }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .btn-primary:hover {
-            background-color: #0b5ed7;
-            border-color: #0a58ca;
-            transform: translateY(-1px);
-        }
-
         /* Tables */
         .table {
             margin-bottom: 0;
@@ -330,6 +332,55 @@
                 display: block;
             }
         }
+
+        .sidebar::before {
+            /* Hapus efek gradient ungu di atas */
+            display: none;
+        }
+
+        .brand-title {
+            /* Ubah warna teks brand jadi gelap */
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-subtitle {
+            color: var(--sidebar-text-muted);
+        }
+
+        .sidebar-toggle-btn {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+            color: #475569;
+        }
+
+        .sidebar-toggle-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .menu-item.active .menu-link {
+            color: white;
+            /* Teks di tombol aktif tetap putih */
+        }
+
+        .user-profile-btn {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+        }
+
+        .user-profile-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .user-name {
+            color: #1e293b;
+        }
+
+        .profile-arrow {
+            color: var(--sidebar-text);
+        }
     </style>
 </head>
 
@@ -369,12 +420,6 @@
                             </ol>
                         </nav>
                     @endif
-
-                    <!-- User Info -->
-                    <div class="user-info d-none d-sm-flex">
-                        <i class="bi bi-person-circle fs-5"></i>
-                        <span>{{ Auth::user()->name ?? 'Admin' }}</span>
-                    </div>
                 </div>
             </header>
 
