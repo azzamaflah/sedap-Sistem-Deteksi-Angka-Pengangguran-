@@ -7,6 +7,7 @@ use App\Models\Kecamatan;
 use App\Models\Desa;
 use App\Models\WilayahTugas;
 use App\Models\Dsrt;
+use App\Models\ConfigQuest; // TAMBAHKAN INI
 use Illuminate\Http\Request;
 use App\Exports\RespondenTemplateExport;
 use App\Imports\RespondenImport;
@@ -36,17 +37,20 @@ class RespondenController extends Controller
     public function create()
     {
         $kecamatan = Kecamatan::all();
-        return view('responden.create', compact('kecamatan'));
+
+        // TAMBAHKAN INI: Load quest yang aktif
+        $quests = ConfigQuest::getActiveQuest();
+
+        return view('responden.create', compact('kecamatan', 'quests'));
     }
 
-    // AJAX: Get Desa by Kecamatan
+    // AJAX methods tetap sama...
     public function getDesaByKecamatan($id_kec)
     {
         $desa = Desa::where('id_kec', $id_kec)->get();
         return response()->json($desa);
     }
 
-    // AJAX: Get Blok Sensus by Desa
     public function getBlokSensusByDesa($id_desa)
     {
         $blokSensus = WilayahTugas::where('id_desa', $id_desa)
@@ -56,7 +60,6 @@ class RespondenController extends Controller
         return response()->json($blokSensus);
     }
 
-    // AJAX: Get NKS by Blok Sensus
     public function getNksByBlokSensus($id_bs)
     {
         $nks = WilayahTugas::where('id_bs', $id_bs)
@@ -67,7 +70,6 @@ class RespondenController extends Controller
         return response()->json($nks);
     }
 
-    // AJAX: Get Nurt by NKS
     public function getNurtByNks($id_nks)
     {
         $nurt = Dsrt::where('id_nks', $id_nks)
@@ -79,29 +81,27 @@ class RespondenController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Validasi dasar
+        $rules = [
             'id_kec' => 'required',
             'id_desa' => 'required',
             'id_bs' => 'required',
             'id_nks' => 'required',
             'id_nurt' => 'required',
             'nama_sample' => 'required|string|max:255',
+        ];
 
-            // Quest 1-4
-            'r7_1' => 'required|in:Ya,Tidak',
-            'r7_2' => 'nullable|in:Ya,Tidak',
-            'r7_3' => 'nullable|in:Ya,Tidak',
-            'r8_1' => 'nullable|in:Ya,Tidak',
+        // TAMBAHKAN: Dynamic validation berdasarkan quest aktif
+        $quests = ConfigQuest::getActiveQuest();
+        foreach ($quests as $quest) {
+            if ($quest->type === 'radio') {
+                $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->getOptionsArray());
+            } else {
+                $rules[$quest->key] = 'nullable|string|max:255';
+            }
+        }
 
-            // Quest 5-6
-            'r9_1' => 'nullable|string|max:255',
-            'r9_3' => 'nullable|string|max:255',
-
-            // Quest 7-9
-            'r20_1' => 'nullable|in:Ya,Tidak',
-            'r20_2' => 'nullable|in:Ya,Tidak',
-            'r20_4' => 'nullable|string',
-        ]);
+        $validated = $request->validate($rules);
 
         $responden = new Responden($validated);
         $responden->hitungStatus();
@@ -130,36 +130,37 @@ class RespondenController extends Controller
             ->distinct()
             ->get();
 
-        return view('responden.edit', compact('responden', 'kecamatan', 'desa', 'blokSensus', 'nks', 'nurt'));
+        // TAMBAHKAN INI: Load quest yang aktif
+        $quests = ConfigQuest::getActiveQuest();
+
+        return view('responden.edit', compact('responden', 'kecamatan', 'desa', 'blokSensus', 'nks', 'nurt', 'quests'));
     }
 
     public function update(Request $request, $no)
     {
         $responden = Responden::where('no', $no)->firstOrFail();
 
-        $validated = $request->validate([
+        // Validasi dasar
+        $rules = [
             'id_kec' => 'required',
             'id_desa' => 'required',
             'id_bs' => 'required',
             'id_nks' => 'required',
             'id_nurt' => 'required',
             'nama_sample' => 'required|string|max:255',
+        ];
 
-            // Quest 1-4: Ubah jadi nullable
-            'r7_1' => 'required|in:Ya,Tidak',
-            'r7_2' => 'nullable|in:Ya,Tidak',
-            'r7_3' => 'nullable|in:Ya,Tidak',
-            'r8_1' => 'nullable|in:Ya,Tidak',
+        // TAMBAHKAN: Dynamic validation
+        $quests = ConfigQuest::getActiveQuest();
+        foreach ($quests as $quest) {
+            if ($quest->type === 'radio') {
+                $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->getOptionsArray());
+            } else {
+                $rules[$quest->key] = 'nullable|string|max:255';
+            }
+        }
 
-            // Quest 5-6
-            'r9_1' => 'nullable|string|max:255',
-            'r9_3' => 'nullable|string|max:255',
-
-            // Quest 7-9
-            'r20_1' => 'nullable|in:Ya,Tidak',
-            'r20_2' => 'nullable|in:Ya,Tidak',
-            'r20_4' => 'nullable|string',
-        ]);
+        $validated = $request->validate($rules);
 
         $responden->fill($validated);
         $responden->hitungStatus();
@@ -168,7 +169,6 @@ class RespondenController extends Controller
         return redirect()->route('responden.index')
             ->with('success', 'Data responden berhasil diupdate');
     }
-
 
     public function destroy($no)
     {
@@ -179,41 +179,51 @@ class RespondenController extends Controller
             ->with('success', 'Data responden berhasil dihapus');
     }
 
+    // Methods lainnya tetap sama...
     public function downloadTemplate()
     {
         return Excel::download(new RespondenTemplateExport, 'template_responden.xlsx');
     }
+
     public function import(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:2048'
         ]);
+
         try {
             $importer = new RespondenImport();
             Excel::import($importer, $request->file('file'));
+
             $ok = $importer->getImported();
             $skip = $importer->getSkipped();
             $err = $importer->getErrors();
+
             if ($ok > 0 && empty($err)) {
                 return back()->with('success', "Import berhasil: $ok data.");
             }
+
             if (!empty($err)) {
                 $msg = "Import {$ok} berhasil, {$skip} gagal.\n" . implode("\n", array_slice($err, 0, 5));
                 return back()->with('warning', $msg);
             }
+
             return back()->with('error', "Import gagal!\n" . implode("\n", $err));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
+
     public function export(Request $request)
     {
         $ids = $request->input('selected', []);
         $dataFormat = $request->input('data_format', 'formatted');
         $outputFormat = $request->input('output_format', 'excel');
+
         if (empty($ids)) {
             return back()->with('error', 'Pilih data yang akan di-export!');
         }
+
         return Excel::download(
             new RespondenExport($ids, $dataFormat),
             'responden_' . now()->format('Ymd_His') . ($outputFormat === 'csv' ? '.csv' : '.xlsx'),

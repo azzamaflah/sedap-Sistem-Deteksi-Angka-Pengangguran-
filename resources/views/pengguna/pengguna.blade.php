@@ -385,14 +385,6 @@
                 threshold: 0.1
             });
             
-            // PENTING: Panggil observer untuk semua elemen .fade-in
-            document.querySelectorAll('.fade-in').forEach(element => {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(10px)';
-                element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-                observer.observe(element);
-            });
-            
             // Bootstrap Tooltip
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function(tooltipTriggerEl) {

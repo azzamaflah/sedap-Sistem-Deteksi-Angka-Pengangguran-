@@ -7,6 +7,7 @@ use App\Http\Controllers\DsrtController;
 use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\UserCustomController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ConfigQuestController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -58,6 +59,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::resource('pengguna', UserCustomController::class);
-});
 
+    // Konfigurasi Quest & Rumus (BARU)
+    Route::prefix('admin/config')->name('admin.config.')->group(function () {
+        // Quest Management
+        Route::get('/quest', [ConfigQuestController::class, 'indexQuest'])->name('quest');
+        Route::put('/quest/{id}', [ConfigQuestController::class, 'updateQuest'])->name('quest.update');
+
+        // Rumus Management
+        Route::get('/rumus', [ConfigQuestController::class, 'indexRumus'])->name('rumus');
+        Route::get('/rumus/{id}/edit', [ConfigQuestController::class, 'editRumus'])->name('rumus.edit');
+        Route::put('/rumus/{id}', [ConfigQuestController::class, 'updateRumus'])->name('rumus.update');
+        Route::post('/rumus/{id}/toggle', [ConfigQuestController::class, 'toggleRumus'])->name('rumus.toggle');
+
+
+        // Help/Documentation
+        Route::get('/help', function () {
+            return view('admin.config-rumus.help');
+        })->name('help');
+    });
+});
 require __DIR__ . '/auth.php';

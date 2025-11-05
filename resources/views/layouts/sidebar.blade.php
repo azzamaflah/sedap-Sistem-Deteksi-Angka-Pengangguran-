@@ -53,6 +53,30 @@
                     </li>
                 @endif
             @endauth
+
+            <!-- Contoh tambahan di sidebar atau menu -->
+            @if (Auth::user()->isAdmin())
+                <div class="admin-menu mb-3">
+                    <h6 class="text-muted">⚙️ ADMIN PANEL</h6>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="{{ route('admin.config.quest') }}" class="text-decoration-none">
+                                📝 Kelola Quest
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{{ route('admin.config.rumus') }}" class="text-decoration-none">
+                                🧮 Kelola Rumus Status
+                            </a>
+                        </li>
+                            {{-- <li class="list-group-item">
+                                <a href="{{ route('users.index') }}" class="text-decoration-none">
+                                    👥 Manajemen User
+                                </a>
+                            </li> --}}
+                    </ul>
+                </div>
+            @endif
         </ul>
     </nav>
 
@@ -703,14 +727,20 @@
         border-radius: 12px;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4),
             0 10px 10px -5px rgba(0, 0, 0, 0.2);
-        min-width: 220px;
-        max-width: 280px;
+        min-width: 100px;
+        max-width: 90vh;
+        top: 20px;
+        bottom: auto;
+        height: auto;
+        display: flex;
+        flex-direction: column;
         z-index: 1100;
         opacity: 0;
         visibility: hidden;
         transform: translateX(-10px) scale(0.95);
         transition: all 0.2s var(--transition-timing);
-        overflow: hidden;
+        **overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .sidebar-popup-menu.show {
@@ -726,6 +756,7 @@
         justify-content: space-between;
         align-items: center;
         background: rgba(99, 102, 241, 0.1);
+        flex-shrink: 0;
     }
 
     .sidebar-popup-title {
@@ -759,6 +790,8 @@
 
     .sidebar-popup-content {
         padding: 0.75rem;
+        flex-grow: 1;
+        overflow-y: auto;
     }
 
     .sidebar-popup-content .menu-text {
@@ -769,6 +802,28 @@
 
     .sidebar-popup-content .menu-item {
         margin: 0.375rem 0.5rem;
+    }
+
+    .sidebar-popup-content .user-dropdown-menu .dropdown-item {
+        padding: 0.75rem 1rem;
+        /* Sedikit dikecilkan */
+        margin-bottom: 0.25rem;
+        border-radius: 8px;
+        /* Tampilan yang lebih halus */
+    }
+
+    .sidebar-popup-content .user-dropdown-menu.show {
+        position: static !important;
+        /* Pastikan menu tidak mengambang */
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        padding: 0;
+        box-shadow: none;
+        /* Hapus shadow ganda */
+        background: transparent;
+        /* Hapus background ganda */
+        border: none;
     }
 
     /* ========================================
@@ -959,26 +1014,38 @@
         }
 
         function showPopupMenu() {
-            if (!mainSidebarNav || !userDropdownMenu || !sidebarPopup || !userProfileBtn) return;
+            if (!userDropdownMenu || !sidebarPopup || !userProfileBtn) return;
 
-            const navClone = mainSidebarNav.cloneNode(true);
+            // Kloning hanya menu dropdown pengguna
             const userMenuClone = userDropdownMenu.cloneNode(true);
 
+            // 1. Kosongkan konten popup
             popupContent.innerHTML = '';
-            popupContent.appendChild(navClone);
 
+            // 2. Bersihkan kelas dan tampilkan menu di dalam popup
+            // Menggunakan user-menu-popup-content agar stylingnya terisolasi (opsional)
             userMenuClone.classList.remove('user-dropdown-menu');
-            userMenuClone.classList.add('show');
+            userMenuClone.classList.add('show'); // Tambahkan kelas show untuk tampilan
+            userMenuClone.style.position = 'static'; // Penting: Reset posisi absolut/relatif
+            userMenuClone.style.top = 'auto';
+            userMenuClone.style.bottom = 'auto';
+
+            // 3. Masukkan konten yang sudah dikloning ke dalam popup
             popupContent.appendChild(userMenuClone);
 
+            // 4. Tampilkan popup
             sidebarPopup.classList.add('show');
+
+            // 5. Ubah judul popup
+            const popupTitle = document.getElementById('popupTitle');
+            if (popupTitle) {
+                // Mengubah judul pop-up menjadi "Akun" atau "Profil"
+                popupTitle.textContent = 'Akun Pengguna';
+            }
 
             if (sidebarOverlay && !isMobile()) {
                 sidebarOverlay.classList.add('show');
             }
-
-            const buttonRect = userProfileBtn.getBoundingClientRect();
-            sidebarPopup.style.top = `${Math.max(buttonRect.top - 20, 20)}px`;
         }
 
         function toggleDropdown() {

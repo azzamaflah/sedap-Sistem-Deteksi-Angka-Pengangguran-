@@ -58,23 +58,70 @@ class Responden extends Model
     }
 
     /**
-     * Method untuk menentukan status Bekerja/Pengangguran
+     * Method BARU: Hitung status berdasarkan rumus dinamis dari config
      */
     public function hitungStatus()
+    {
+        // Ambil rumus yang aktif
+        $rumus = ConfigRumus::getActiveRumus();
+
+        if (!$rumus) {
+            // Fallback ke logic lama jika tidak ada rumus aktif
+            $this->hitungStatusLegacy();
+            return;
+        }
+
+        // Siapkan data untuk evaluasi
+        $data = [
+            'r7_1' => $this->r7_1,
+            'r7_2' => $this->r7_2,
+            'r7_3' => $this->r7_3,
+            'r8_1' => $this->r8_1,
+            'r9_1' => $this->r9_1,
+            'r9_3' => $this->r9_3,
+            'r20_1' => $this->r20_1,
+            'r20_2' => $this->r20_2,
+            'r20_4' => $this->r20_4,
+        ];
+
+        // Evaluasi kondisi Bekerja
+        if ($rumus->evaluateCondition($data, 'bekerja')) {
+            $this->bekerja = 'Bekerja';
+            $this->pengangguran = null;
+
+            // Logic Quest 7-9 tetap sama
+            if ($this->r20_1 == 'Ya' && $this->r20_2 == 'Ya') {
+                $this->r20_4 = null; // Quest 9 tidak diisi
+            }
+        }
+        // Evaluasi kondisi Pengangguran
+        elseif ($rumus->evaluateCondition($data, 'pengangguran')) {
+            $this->bekerja = null;
+            $this->pengangguran = 'Pengangguran';
+
+            // Reset Quest 5-6 karena tidak boleh diisi
+            $this->r9_1 = null;
+            $this->r9_3 = null;
+        }
+        // Default
+        else {
+            $this->bekerja = null;
+            $this->pengangguran = null;
+        }
+    }
+
+    /**
+     * Method LAMA: Fallback jika tidak ada rumus aktif
+     */
+    private function hitungStatusLegacy()
     {
         // Cek apakah salah satu dari Quest 1-4 dijawab "Ya"
         if ($this->r7_1 == 'Ya' || $this->r7_2 == 'Ya' || $this->r7_3 == 'Ya' || $this->r8_1 == 'Ya') {
             $this->bekerja = 'Bekerja';
             $this->pengangguran = null;
 
-            // Quest 7-9 bisa diisi (untuk yang bekerja tapi cari tambahan)
-            // Logic Quest 7-9:
-            // - Jika Quest 7 = Ya DAN Quest 8 = Ya → Quest 9 dikosongkan
-            // - Jika Quest 7 = Ya DAN Quest 8 = Tidak → Quest 9 diisi
-            // - Jika Quest 7 = Tidak → Quest 8 & 9 bisa diisi
-
             if ($this->r20_1 == 'Ya' && $this->r20_2 == 'Ya') {
-                $this->r20_4 = null; // Quest 9 tidak diisi
+                $this->r20_4 = null;
             }
         }
         // Jika semua Quest 1-4 dijawab "Tidak"
@@ -84,15 +131,9 @@ class Responden extends Model
         ) {
             $this->bekerja = null;
             $this->pengangguran = 'Pengangguran';
-
-            // Reset Quest 5-6 karena tidak boleh diisi
             $this->r9_1 = null;
             $this->r9_3 = null;
-
-            // Quest 7-9 tetap bisa diisi (untuk pengangguran)
-        }
-        // Default
-        else {
+        } else {
             $this->bekerja = null;
             $this->pengangguran = null;
         }
@@ -103,7 +144,6 @@ class Responden extends Model
      */
     public function shouldShowQuest789()
     {
-        // Quest 7-9 muncul jika ada yang jawab Ya di Quest 1-4
         return ($this->r7_1 == 'Ya' || $this->r7_2 == 'Ya' ||
             $this->r7_3 == 'Ya' || $this->r8_1 == 'Ya');
     }
