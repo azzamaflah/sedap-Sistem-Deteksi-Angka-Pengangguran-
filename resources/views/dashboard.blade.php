@@ -388,244 +388,239 @@
     </div>
 
     <div class="row g-3 mb-4">
-    
-    {{-- Card 1: Wilayah Tugas --}}
-    <div class="col-xl-3 col-md-6"> 
-        <div class="card border-0 shadow-sm h-100 stats-card fade-in"
-            onclick="window.location='{{ route('wilayahTugas.index') }}'">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="flex-grow-1">
-                        <p class="text-muted mb-2 text-uppercase fw-semibold"
-                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
-                            Wilayah Tugas
-                        </p>
-                        <h2 class="mb-0 stats-number text-primary" style="font-size: 2.8rem;">
-                            {{ number_format($totalWilayahTugas ?? 0) }}</h2>
+
+        {{-- Card 1: Wilayah Tugas --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100 stats-card fade-in"
+                onclick="window.location='{{ route('wilayahTugas.index') }}'">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="flex-grow-1">
+                            <p class="text-muted mb-2 text-uppercase fw-semibold"
+                                style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                                Wilayah Tugas
+                            </p>
+                            <h2 class="mb-0 stats-number text-primary" style="font-size: 2.8rem;">
+                                {{ number_format($totalWilayahTugas ?? 0) }}</h2>
+                        </div>
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary"
+                            style="width: 70px; height: 70px; border-radius: 18px;">
+                            <i class="bi bi-geo-alt-fill" style="font-size: 2.2rem;"></i>
+                        </div>
                     </div>
-                    <div class="icon-box bg-primary bg-opacity-10 text-primary"
-                        style="width: 70px; height: 70px; border-radius: 18px;">
-                        <i class="bi bi-geo-alt-fill" style="font-size: 2.2rem;"></i>
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <small class="text-muted" style="font-size: 0.8rem;">
+                            <i class="bi bi-clock-history"></i> Update terbaru
+                        </small>
+                        <a href="{{ route('wilayahTugas.index') }}"
+                            class="text-decoration-none text-primary fw-semibold small detail-link"
+                            style="font-size: 0.85rem;">
+                            Detail <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+            </div>
+        </div>
+
+        {{-- Card 2: Sampel RT (DSRT) --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100 stats-card fade-in"
+                onclick="window.location='{{ route('dsrt.index') }}'">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="flex-grow-1">
+                            <p class="text-muted mb-2 text-uppercase fw-semibold"
+                                style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                                Sampel RT (DSRT)
+                            </p>
+                            <h2 class="mb-0 stats-number text-success" style="font-size: 2.8rem;">
+                                {{ number_format($totalDsrt ?? 0) }}</h2>
+                        </div>
+                        <div class="icon-box bg-success bg-opacity-10 text-success"
+                            style="width: 70px; height: 70px; border-radius: 18px;">
+                            <i class="bi bi-file-earmark-text-fill" style="font-size: 2.2rem;"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <small class="text-muted" style="font-size: 0.8rem;">
+                            <i class="bi bi-graph-up"></i> Total sampel
+                        </small>
+                        <a href="{{ route('dsrt.index') }}"
+                            class="text-decoration-none text-success fw-semibold small detail-link"
+                            style="font-size: 0.85rem;">
+                            Detail <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Card 3: Total Responden --}}
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100 stats-card fade-in"
+                onclick="window.location='{{ route('responden.index') }}'">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="flex-grow-1">
+                            <p class="text-muted mb-2 text-uppercase fw-semibold"
+                                style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                                Total Responden
+                            </p>
+                            <h2 class="mb-0 stats-number text-warning" style="font-size: 2.8rem;">
+                                {{ number_format($totalResponden ?? 0) }}</h2>
+                        </div>
+                        <div class="icon-box bg-warning bg-opacity-10 text-warning"
+                            style="width: 70px; height: 70px; border-radius: 18px;">
+                            <i class="bi bi-people-fill" style="font-size: 2.2rem;"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <small class="text-muted" style="font-size: 0.8rem;">
+                            <i class="bi bi-person-check"></i> Data terkumpul
+                        </small>
+                        <a href="{{ route('responden.index') }}"
+                            class="text-decoration-none text-warning fw-semibold small detail-link"
+                            style="font-size: 0.85rem;">
+                            Detail <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100 stats-card fade-in">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="flex-grow-1">
+                            <p class="text-muted mb-2 text-uppercase fw-semibold"
+                                style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                                Aksi Cepat
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Bagian 2: Tombol Aksi (Body Konten Utama) --}}
+                    <div class="row g-2 text-center mb-3">
+
+                        {{-- Tombol 1: Tambah Wilayah (col-4) --}}
+                        <div class="col-4">
+                            <a href="{{ route('wilayahTugas.create') }}"
+                                class="btn btn-outline-primary btn-sm quick-action-btn w-100 p-2" 
+                                title="Tambah Wilayah">
+                                <i class="bi bi-geo-alt-fill d-block mb-1" style="font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.65rem; font-weight: 600;">Wilayah</span>
+                            </a>
+                        </div>
+
+                        {{-- Tombol 2: Tambah Sampel RT (col-4) --}}
+                        <div class="col-4">
+                            <a href="{{ route('dsrt.create') }}"
+                                class="btn btn-outline-success btn-sm quick-action-btn w-100 p-2"
+                                title="Tambah Sampel RT">
+                                <i class="bi bi-file-earmark-text-fill d-block mb-1" style="font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.65rem; font-weight: 600;">Sampel RT</span>
+                            </a>
+                        </div>
+
+                        {{-- Tombol 3: Tambah Responden (col-4) --}}
+                        <div class="col-4">
+                            <a href="{{ route('responden.create') }}"
+                                class="btn btn-outline-warning btn-sm quick-action-btn w-100 p-2"
+                                title="Tambah Responden">
+                                <i class="bi bi-person-plus-fill d-block mb-1" style="font-size: 1.1rem;"></i>
+                                <span style="font-size: 0.65rem; font-weight: 600;">Responden</span>
+                            </a>
+                        </div>
+                    </div>
+
                     <small class="text-muted" style="font-size: 0.8rem;">
-                        <i class="bi bi-clock-history"></i> Update terbaru
-                    </small>
-                    <a href="{{ route('wilayahTugas.index') }}"
-                        class="text-decoration-none text-primary fw-semibold small detail-link"
-                        style="font-size: 0.85rem;">
-                        Detail <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
+                            <i class="bi bi-plus-circle"></i> tambah data
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endsection
 
-    {{-- Card 2: Sampel RT (DSRT) --}}
-    <div class="col-xl-3 col-md-6"> 
-        <div class="card border-0 shadow-sm h-100 stats-card fade-in"
-            onclick="window.location='{{ route('dsrt.index') }}'">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="flex-grow-1">
-                        <p class="text-muted mb-2 text-uppercase fw-semibold"
-                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
-                            Sampel RT (DSRT)
-                        </p>
-                        <h2 class="mb-0 stats-number text-success" style="font-size: 2.8rem;">
-                            {{ number_format($totalDsrt ?? 0) }}</h2>
-                    </div>
-                    <div class="icon-box bg-success bg-opacity-10 text-success"
-                        style="width: 70px; height: 70px; border-radius: 18px;">
-                        <i class="bi bi-file-earmark-text-fill" style="font-size: 2.2rem;"></i>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                    <small class="text-muted" style="font-size: 0.8rem;">
-                        <i class="bi bi-graph-up"></i> Total sampel
-                    </small>
-                    <a href="{{ route('dsrt.index') }}"
-                        class="text-decoration-none text-success fw-semibold small detail-link"
-                        style="font-size: 0.85rem;">
-                        Detail <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    @section('scripts')
+        <script>
+            // Fungsi untuk memperbarui jam secara real-time
+            function updateClock() {
+                const clockElement = document.getElementById('realtime-clock');
+                const dateElement = document.getElementById('realtime-date');
 
-    {{-- Card 3: Total Responden --}}
-    <div class="col-xl-3 col-md-6"> 
-        <div class="card border-0 shadow-sm h-100 stats-card fade-in"
-            onclick="window.location='{{ route('responden.index') }}'">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="flex-grow-1">
-                        <p class="text-muted mb-2 text-uppercase fw-semibold"
-                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
-                            Total Responden
-                        </p>
-                        <h2 class="mb-0 stats-number text-warning" style="font-size: 2.8rem;">
-                            {{ number_format($totalResponden ?? 0) }}</h2>
-                    </div>
-                    <div class="icon-box bg-warning bg-opacity-10 text-warning"
-                        style="width: 70px; height: 70px; border-radius: 18px;">
-                        <i class="bi bi-people-fill" style="font-size: 2.2rem;"></i>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                    <small class="text-muted" style="font-size: 0.8rem;">
-                        <i class="bi bi-person-check"></i> Data terkumpul
-                    </small>
-                    <a href="{{ route('responden.index') }}"
-                        class="text-decoration-none text-warning fw-semibold small detail-link"
-                        style="font-size: 0.85rem;">
-                        Detail <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+                if (clockElement) {
+                    // Gunakan waktu lokal browser untuk real-time, ini akan lebih akurat di sisi klien
+                    const now = new Date();
 
-    {{-- Card 4: Aksi Cepat (Grid 3 Kolom Horizontal) - Disesuaikan dengan Pola Card 3 --}}
-<div class="col-xl-3 col-md-6"> 
-    <div class="card border-0 shadow-sm h-100 stats-card fade-in">
-        <div class="card-body p-4">
-            {{-- Bagian 1: Header Ringkas (Mengganti card-header lama) --}}
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <div class="flex-grow-1">
-                    <p class="text-muted mb-2 text-uppercase fw-semibold"
-                        style="font-size: 0.75rem; letter-spacing: 0.5px;">
-                        Aksi Cepat
-                    </p>
-                </div>
-            </div>
-            
-            {{-- Bagian 2: Tombol Aksi (Body Konten Utama) --}}
-            <div class="row g-2 text-center mb-3"> 
-                
-                {{-- Tombol 1: Tambah Wilayah (col-4) --}}
-                <div class="col-4">
-                    <a href="{{ route('wilayahTugas.create') }}" 
-                       class="btn btn-outline-primary btn-sm quick-action-btn w-100 p-2"
-                       title="Tambah Wilayah">
-                        <i class="bi bi-geo-alt-fill d-block mb-1" style="font-size: 1.1rem;"></i>
-                        <span style="font-size: 0.65rem; font-weight: 600;">Wilayah</span>
-                    </a>
-                </div>
-                
-                {{-- Tombol 2: Tambah Sampel RT (col-4) --}}
-                <div class="col-4">
-                    <a href="{{ route('dsrt.create') }}" 
-                       class="btn btn-outline-success btn-sm quick-action-btn w-100 p-2"
-                       title="Tambah Sampel RT">
-                        <i class="bi bi-file-earmark-text-fill d-block mb-1" style="font-size: 1.1rem;"></i>
-                        <span style="font-size: 0.65rem; font-weight: 600;">Sampel RT</span>
-                    </a>
-                </div>
-                
-                {{-- Tombol 3: Tambah Responden (col-4) --}}
-                <div class="col-4">
-                    <a href="{{ route('responden.create') }}" 
-                       class="btn btn-outline-warning btn-sm quick-action-btn w-100 p-2"
-                       title="Tambah Responden">
-                        <i class="bi bi-person-plus-fill d-block mb-1" style="font-size: 1.1rem;"></i>
-                        <span style="font-size: 0.65rem; font-weight: 600;">Responden</span>
-                    </a>
-                </div>
-                
-            </div>
-            
-            {{-- Bagian 3: Footer Rinci (Dibuat konsisten dengan Card 3) --}}
-            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                <small class="text-muted" style="font-size: 0.8rem;">
-                    <i class="bi bi-plus-circle"></i> tambah data
-                </small>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+                    // Opsi untuk format jam 24 jam (HH:MM:SS)
+                    const timeOptions = {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    };
 
-@section('scripts')
-    <script>
-        // Fungsi untuk memperbarui jam secara real-time
-        function updateClock() {
-            const clockElement = document.getElementById('realtime-clock');
-            const dateElement = document.getElementById('realtime-date');
+                    // Opsi untuk format tanggal (dddd, D MMMM Y) - menyesuaikan dengan PHP isoFormat
+                    const dateOptions = {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    };
 
-            if (clockElement) {
-                // Gunakan waktu lokal browser untuk real-time, ini akan lebih akurat di sisi klien
-                const now = new Date();
+                    // Format waktu ke H:i:s dan tanggal ke dddd, D MMMM Y (menggunakan locale ID untuk bahasa Indonesia)
+                    const timeString = now.toLocaleTimeString('id-ID', timeOptions);
+                    const dateString = now.toLocaleDateString('id-ID', dateOptions);
 
-                // Opsi untuk format jam 24 jam (HH:MM:SS)
-                const timeOptions = {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                };
+                    // Update jam
+                    clockElement.textContent = timeString;
 
-                // Opsi untuk format tanggal (dddd, D MMMM Y) - menyesuaikan dengan PHP isoFormat
-                const dateOptions = {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                };
-
-                // Format waktu ke H:i:s dan tanggal ke dddd, D MMMM Y (menggunakan locale ID untuk bahasa Indonesia)
-                const timeString = now.toLocaleTimeString('id-ID', timeOptions);
-                const dateString = now.toLocaleDateString('id-ID', dateOptions);
-
-                // Update jam
-                clockElement.textContent = timeString;
-
-                // Update tanggal (hanya perbarui jika tanggal berubah)
-                if (dateElement && dateElement.textContent !== dateString) {
-                    dateElement.textContent = dateString;
+                    // Update tanggal (hanya perbarui jika tanggal berubah)
+                    if (dateElement && dateElement.textContent !== dateString) {
+                        dateElement.textContent = dateString;
+                    }
                 }
             }
-        }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // >>> Real-time Clock Initialization <<<
-            updateClock();
-            // Perbarui jam setiap 1 detik
-            setInterval(updateClock, 1000);
+            document.addEventListener('DOMContentLoaded', function() {
+                // >>> Real-time Clock Initialization <<<
+                updateClock();
+                // Perbarui jam setiap 1 detik
+                setInterval(updateClock, 1000);
 
-            // Smooth scroll reveal animation
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                        observer.unobserve(entry.target); // Stop observing once visible
-                    }
+                // Smooth scroll reveal animation
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                            observer.unobserve(entry.target); // Stop observing once visible
+                        }
+                    });
+                }, {
+                    threshold: 0.1
                 });
-            }, {
-                threshold: 0.1
-            });
 
 
-            // Stats cards click handler
-            const statsCards = document.querySelectorAll('.stats-card');
-            statsCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    const link = this.querySelector('a[href]');
-                    if (link && !e.target.closest('a')) {
-                        window.location.href = link.getAttribute('href');
-                    }
+                // Stats cards click handler
+                const statsCards = document.querySelectorAll('.stats-card');
+                statsCards.forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        const link = this.querySelector('a[href]');
+                        if (link && !e.target.closest('a')) {
+                            window.location.href = link.getAttribute('href');
+                        }
+                    });
+                });
+
+                // Prevent double click on detail links
+                document.querySelectorAll('.detail-link').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
                 });
             });
-
-            // Prevent double click on detail links
-            document.querySelectorAll('.detail-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-            });
-        });
-    </script>
-@endsection
+        </script>
+    @endsection

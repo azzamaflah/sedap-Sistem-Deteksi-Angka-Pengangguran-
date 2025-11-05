@@ -42,7 +42,7 @@ class UserCustomController extends Controller
 
         // Jika email kosong, buat email dummy
         if (empty($validated['email'])) {
-            $validated['email'] = $validated['username'] . '@bantulwe.com';
+            $validated['email'] = $validated['username'] . '@bps.go.id';
         }
 
         $validated['password'] = Hash::make($validated['password']);
@@ -73,7 +73,7 @@ class UserCustomController extends Controller
 
         // Jika email kosong, buat email dummy
         if (empty($validated['email'])) {
-            $validated['email'] = $validated['username'] . '@bantulwe.com';
+            $validated['email'] = $validated['username'] . '@bps.go.id';
         }
 
         if ($request->filled('password')) {
