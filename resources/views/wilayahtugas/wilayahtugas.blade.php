@@ -31,21 +31,7 @@
             transform: rotate(360deg) scale(1.1);
         }
 
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        
 
         .system-info-item {
             transition: all 0.3s ease;
@@ -74,22 +60,23 @@
             transition: all 0.3s ease;
             border: none;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 2; /* Pastikan tombol memiliki stacking context, tapi lebih rendah dari badge */
+            z-index: 2;
+            /* Pastikan tombol memiliki stacking context, tapi lebih rendah dari badge */
         }
 
         /* .btn-custom::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-            z-index: 0;
-        } */
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: translate(-50%, -50%);
+                transition: width 0.6s, height 0.6s;
+                z-index: 0;
+            } */
 
         .btn-custom:hover::before {
             width: 300px;
@@ -137,12 +124,14 @@
 
         /* Add Button - Gradient Primary (Mengganti warna hijau ke biru primer untuk konsistensi) */
         .btn-add {
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Warna Primary Baru */
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            /* Warna Primary Baru */
             color: white;
         }
 
         .btn-add:hover {
-            background: linear-gradient(135deg, #0056b3 0%, #004085 100%); /* Warna Primary Baru */
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+            /* Warna Primary Baru */
             color: white;
         }
 
@@ -150,8 +139,10 @@
         .export-counter {
             /* **PERUBAHAN Z-INDEX & POSISI UNTUK VISIBILITAS MAKSIMAL** */
             position: absolute;
-            top: -10px;    /* Sedikit lebih ke atas */
-            right: -10px;  /* Sedikit lebih ke kanan */
+            top: -10px;
+            /* Sedikit lebih ke atas */
+            right: -10px;
+            /* Sedikit lebih ke kanan */
             background: #dc3545;
             color: white;
             border-radius: 50%;
@@ -164,7 +155,8 @@
             font-weight: bold;
             box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
             animation: pulse 2s infinite;
-            z-index: 5; /* Z-index yang sangat tinggi untuk memastikan ia di depan semua */
+            z-index: 5;
+            /* Z-index yang sangat tinggi untuk memastikan ia di depan semua */
         }
 
         @keyframes pulse {
@@ -346,10 +338,11 @@
         .search-wrapper .search-btn:hover i {
             transform: scale(1.2);
         }
-        
+
         /* Table Row Hover/Click Effect */
         .table-hover tbody tr:hover {
-            background-color: rgba(0, 123, 255, 0.05); /* Light primary color hover */
+            background-color: rgba(0, 123, 255, 0.05);
+            /* Light primary color hover */
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -361,7 +354,7 @@
             line-height: 1.5;
             border-radius: 0.2rem;
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .btn-action-group {
@@ -507,13 +500,15 @@
                                 <td class="text-center">
                                     <div class="btn-group btn-action-group" role="group">
                                         {{-- MODIFIKASI: Ikon saja, btn-outline-primary --}}
-                                        <a href="{{ route('wilayahTugas.edit', $row->no) }}" class="btn btn-outline-primary btn-sm"
-                                            data-bs-toggle="tooltip" title="Edit Data">
+                                        <a href="{{ route('wilayahTugas.edit', $row->no) }}"
+                                            class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip"
+                                            title="Edit Data">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         {{-- MODIFIKASI: Ikon saja, btn-outline-danger --}}
-                                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip"
-                                            title="Hapus Data" onclick="confirmDelete({{ $row->no }})">
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                            data-bs-toggle="tooltip" title="Hapus Data"
+                                            onclick="confirmDelete({{ $row->no }})">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
@@ -592,7 +587,7 @@
     <div class="modal fade" id="modalImport" tabindex="-1" aria-labelledby="modalImportLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-info text-white">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalImportLabel">
                         <i class="bi bi-file-earmark-arrow-up"></i> Import Data Wilayah Tugas
                     </h5>
@@ -691,15 +686,6 @@
             }, {
                 threshold: 0.1
             });
-
-            // Observe all fade-in elements (Diambil dari dashboard.blade.php)
-            document.querySelectorAll('.fade-in').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease-out';
-                observer.observe(el);
-            });
-
             // Bootstrap Tooltip
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function(tooltipTriggerEl) {

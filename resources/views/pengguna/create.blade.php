@@ -19,33 +19,21 @@
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">ID User <span class="text-danger">*</span></label>
-                        <input type="text" name="id_user" class="form-control @error('id_user') is-invalid @enderror"
-                            value="{{ old('id_user') }}" required placeholder="Contoh: USR001">
-                        @error('id_user')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <small class="text-muted">ID User harus unik dan tidak boleh sama</small>
-                    </div>
-
-                    <div class="col-md-6">
                         <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                        <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror"
-                            value="{{ old('nama') }}" required placeholder="Nama lengkap pengguna">
-                        @error('nama')
+                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+                            value="{{ old('name') }}" required placeholder="Nama lengkap pengguna">
+                        @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
                     <div class="col-md-6">
                         <label class="form-label">Username <span class="text-danger">*</span></label>
-                        <input type="text" name="user_name" class="form-control @error('user_name') is-invalid @enderror"
-                            value="{{ old('user_name') }}" required placeholder="Username untuk login">
-                        @error('user_name')
+                        <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
+                            value="{{ old('username') }}" required placeholder="Username untuk login">
+                        @error('username')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
@@ -55,7 +43,17 @@
                         @enderror
                         <small class="text-muted">Email bersifat opsional</small>
                     </div>
-
+                    <div class="col-md-6">
+                        <label class="form-label">Role <span class="text-danger">*</span></label>
+                        <select name="role" class="form-select @error('role') is-invalid @enderror" required>
+                            <option value="">-- Pilih Role --</option>
+                            <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                            <option value="user" {{ old('role') === 'user' ? 'selected' : '' }}>User</option>
+                        </select>
+                        @error('role')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                     <div class="col-md-12">
                         <label class="form-label">Password <span class="text-danger">*</span></label>
                         <div class="input-group">
@@ -73,7 +71,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-footer text-end">
                 <a href="{{ route('pengguna.index') }}" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Batal</a>
                 <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Simpan Data</button>
@@ -84,7 +81,6 @@
 
 @section('scripts')
     <script>
-        // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordField = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');

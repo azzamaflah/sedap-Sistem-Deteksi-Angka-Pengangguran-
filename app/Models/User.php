@@ -10,12 +10,12 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // ✅ Pastikan pakai tabel users (default Laravel Breeze)
     protected $table = 'users';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name',     // ✅ Kolom yang akan ditampilkan sebagai nama pengawas
+        'name',
+        'username',      // ✅ TAMBAHKAN
         'email',
         'password',
         'role',
@@ -34,14 +34,10 @@ class User extends Authenticatable
         ];
     }
 
-    // ✅ TAMBAHAN: Relasi ke WilayahTugas (One User -> Many WilayahTugas)
+    // Relasi ke WilayahTugas
     public function wilayahTugas()
     {
         return $this->hasMany(WilayahTugas::class, 'id_user', 'id');
-        // Parameter:
-        // - WilayahTugas::class = Model tujuan
-        // - 'id_user' = Foreign key di tabel bloksensus
-        // - 'id' = Primary key di tabel users
     }
 
     // Method helper untuk cek role
@@ -55,19 +51,16 @@ class User extends Authenticatable
         return $this->role === 'user';
     }
 
-    // ✅ TAMBAHAN: Method helper untuk mendapatkan wilayah tugas user
     public function getWilayahTugasCount()
     {
         return $this->wilayahTugas()->count();
     }
 
-    // ✅ TAMBAHAN: Scope untuk filter user yang punya wilayah tugas
     public function scopeHasWilayahTugas($query)
     {
         return $query->whereHas('wilayahTugas');
     }
 
-    // ✅ TAMBAHAN: Scope untuk filter user yang tidak punya wilayah tugas
     public function scopeWithoutWilayahTugas($query)
     {
         return $query->whereDoesntHave('wilayahTugas');

@@ -17,22 +17,6 @@
             border-bottom: 2px solid #f0f0f0 !important;
         }
 
-        /* Smooth Page Load Animation (Untuk div.fade-in) */
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
 
         /* System Info Item (Digunakan untuk highlight baris) */
         .system-info-item {
@@ -525,6 +509,7 @@
         <div class="card-footer bg-white fade-in" style="animation-delay: 0.2s;">
             {{ $data->links('pagination::bootstrap-5') }}
         </div>
+        
     </div>
 
     <div class="modal fade" id="modalExport" tabindex="-1" aria-labelledby="modalExportLabel" aria-hidden="true">
@@ -573,7 +558,7 @@
     <div class="modal fade" id="modalImport" tabindex="-1" aria-labelledby="modalImportLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-info text-white">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalImportLabel">
                         <i class="bi bi-file-earmark-arrow-up"></i> Import Data Sampel Rumah Tangga
                     </h5>
@@ -670,13 +655,6 @@
                 threshold: 0.1
             });
 
-            // Observe all fade-in elements
-            document.querySelectorAll('.fade-in').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease-out';
-                observer.observe(el);
-            });
             
             // Bootstrap Tooltip
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

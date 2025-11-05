@@ -14,38 +14,27 @@
         <div class="card-header">
             <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Form Edit Pengguna</h5>
         </div>
-        <form method="POST" action="{{ route('pengguna.update', $pengguna->no) }}">
+        <form method="POST" action="{{ route('pengguna.update', $pengguna->id) }}">
             @csrf
             @method('PUT')
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">ID User <span class="text-danger">*</span></label>
-                        <input type="text" name="id_user" class="form-control @error('id_user') is-invalid @enderror"
-                            value="{{ old('id_user', $pengguna->id_user) }}" required>
-                        @error('id_user')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6">
                         <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-                        <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror"
-                            value="{{ old('nama', $pengguna->nama) }}" required>
-                        @error('nama')
+                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+                            value="{{ old('name', $pengguna->name) }}" required>
+                        @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
                     <div class="col-md-6">
                         <label class="form-label">Username <span class="text-danger">*</span></label>
-                        <input type="text" name="user_name" class="form-control @error('user_name') is-invalid @enderror"
-                            value="{{ old('user_name', $pengguna->user_name) }}" required>
-                        @error('user_name')
+                        <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
+                            value="{{ old('username', $pengguna->username) }}" required>
+                        @error('username')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
@@ -54,7 +43,19 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
+                    <div class="col-md-6">
+                        <label class="form-label">Role <span class="text-danger">*</span></label>
+                        <select name="role" class="form-select @error('role') is-invalid @enderror" required>
+                            <option value="">-- Pilih Role --</option>
+                            <option value="admin" {{ old('role', $pengguna->role) === 'admin' ? 'selected' : '' }}>Admin
+                            </option>
+                            <option value="user" {{ old('role', $pengguna->role) === 'user' ? 'selected' : '' }}>User
+                            </option>
+                        </select>
+                        @error('role')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                     <div class="col-md-12">
                         <label class="form-label">Password</label>
                         <div class="input-group">
@@ -73,7 +74,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card-footer text-end">
                 <a href="{{ route('pengguna.index') }}" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Batal</a>
                 <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Update Data</button>
@@ -84,7 +84,6 @@
 
 @section('scripts')
     <script>
-        // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordField = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');

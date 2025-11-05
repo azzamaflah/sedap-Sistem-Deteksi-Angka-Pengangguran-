@@ -12,7 +12,7 @@
 
 @section('content')
     <div class="card shadow-sm">
-        <div class="card-header bg-warning text-white">
+        <div class="card-header bg-primary text-white">
             <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Form Edit Responden</h5>
         </div>
         <div class="card-body">
@@ -223,7 +223,7 @@
                     <a href="{{ route('responden.index') }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Kembali
                     </a>
-                    <button type="submit" class="btn btn-warning text-white">
+                    <button type="submit" class="btn btn-primary text-white">
                         <i class="bi bi-save"></i> Update Data
                     </button>
                 </div>

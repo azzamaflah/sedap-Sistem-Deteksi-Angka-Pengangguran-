@@ -29,28 +29,35 @@
                     <thead class="table-light">
                         <tr>
                             <th>No</th>
-                            <th>ID User</th>
                             <th>Nama Lengkap</th>
                             <th>Username</th>
                             <th>Email</th>
+                            <th>Role</th>
                             <th style="width:120px">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($data as $row)
+                        @forelse ($data as $index => $row)
                             <tr>
-                                <td>{{ $row->no }}</td>
-                                <td><span class="badge bg-info">{{ $row->id_user }}</span></td>
-                                <td><strong>{{ $row->nama }}</strong></td>
-                                <td>{{ $row->user_name }}</td>
+                                <td>{{ $data->firstItem() + $index }}</td>
+                                <td><strong>{{ $row->name }}</strong></td>
+                                <td><span class="badge bg-info">{{ $row->username }}</span></td>
                                 <td>{{ $row->email ?? '-' }}</td>
                                 <td>
-                                    <a href="{{ route('pengguna.edit', $row->no) }}" class="btn btn-warning btn-sm"
+                                    @if ($row->role === 'admin')
+                                        <span class="badge bg-danger">Admin</span>
+                                    @else
+                                        <span class="badge bg-secondary">User</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('pengguna.edit', $row->id) }}" class="btn btn-warning btn-sm"
                                         title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <form action="{{ route('pengguna.destroy', $row->no) }}" method="POST"
-                                        style="display:inline;" onsubmit="return confirmDelete();">
+                                    <form action="{{ route('pengguna.destroy', $row->id) }}" method="POST"
+                                        style="display:inline;"
+                                        onsubmit="return confirm('Yakin ingin menghapus pengguna ini?');">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-danger btn-sm" title="Hapus"><i

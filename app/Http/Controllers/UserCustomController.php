@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UserCustom;
+use App\Models\User;  // ✅ GANTI dari UserCustom ke User
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -10,20 +10,18 @@ class UserCustomController extends Controller
 {
     public function index(Request $request)
     {
-        $query = UserCustom::query();
+        $query = User::query();
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('nama', 'like', "%{$search}%")
-                    ->orWhere('user_name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('id_user', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
         $data = $query->paginate(20);
-
         return view('pengguna.pengguna', compact('data'));
     }
 
@@ -35,38 +33,48 @@ class UserCustomController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id_user' => 'required|string|max:50|unique:user,id_user',
-            'nama' => 'required|string|max:50',
-            'user_name' => 'required|string|max:50',
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:50|unique:users,username',
+            'email' => 'nullable|email|max:255|unique:users,email',
             'password' => 'required|string|min:4',
-            'email' => 'nullable|email|max:50',
+            'role' => 'required|in:admin,user',  // ✅ TAMBAHKAN
         ]);
+
+        // Jika email kosong, buat email dummy
+        if (empty($validated['email'])) {
+            $validated['email'] = $validated['username'] . '@bantulwe.com';
+        }
 
         $validated['password'] = Hash::make($validated['password']);
 
-        UserCustom::create($validated);
+        User::create($validated);
 
         return redirect()->route('pengguna.index')
             ->with('success', 'Pengguna berhasil ditambahkan');
     }
 
-    public function edit($no)
+    public function edit($id)
     {
-        $pengguna = UserCustom::where('no', $no)->firstOrFail();
+        $pengguna = User::findOrFail($id);
         return view('pengguna.edit', compact('pengguna'));
     }
 
-    public function update(Request $request, $no)
+    public function update(Request $request, $id)
     {
-        $pengguna = UserCustom::where('no', $no)->firstOrFail();
+        $pengguna = User::findOrFail($id);
 
         $validated = $request->validate([
-            'id_user' => 'required|string|max:50|unique:user,id_user,' . $pengguna->no . ',no',
-            'nama' => 'required|string|max:50',
-            'user_name' => 'required|string|max:50',
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:50|unique:users,username,' . $pengguna->id,
+            'email' => 'nullable|email|max:255|unique:users,email,' . $pengguna->id,
             'password' => 'nullable|string|min:4',
-            'email' => 'nullable|email|max:50',
+            'role' => 'required|in:admin,user',  // ✅ TAMBAHKAN
         ]);
+
+        // Jika email kosong, buat email dummy
+        if (empty($validated['email'])) {
+            $validated['email'] = $validated['username'] . '@bantulwe.com';
+        }
 
         if ($request->filled('password')) {
             $validated['password'] = Hash::make($validated['password']);
@@ -80,9 +88,9 @@ class UserCustomController extends Controller
             ->with('success', 'Pengguna berhasil diupdate');
     }
 
-    public function destroy($no)
+    public function destroy($id)
     {
-        $pengguna = UserCustom::where('no', $no)->firstOrFail();
+        $pengguna = User::findOrFail($id);
         $pengguna->delete();
 
         return redirect()->route('pengguna.index')

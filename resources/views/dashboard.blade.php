@@ -348,7 +348,7 @@
 @endsection
 
 @section('content')
-    <div class="row g-4 mb-4 fade-in">
+    <div class="row g-2 mb-2 fade-in">
         <div class="col-12">
             <div class="card border-0 shadow-sm welcome-gradient overflow-hidden">
                 <div class="card-body p-4 text-white position-relative" style="z-index: 10;">
@@ -364,7 +364,7 @@
                                 Selamat Datang, {{ Auth::user()->nama ?? (Auth::user()->name ?? 'Admin') }}! 👋
                             </h3>
                             <p class="mb-3 opacity-90" style="font-size: 1.1rem;">
-                                Sistem Deteksi Angka Kemiskinan - BPS Kabupaten Bantul
+                                Sistem Deteksi Angka Pengangguran - BPS Kabupaten Bantul
                             </p>
                             <div class="d-flex align-items-center gap-3 flex-wrap">
                                 <div class="d-flex align-items-center" style="font-size: 0.95rem;">
@@ -387,292 +387,165 @@
         </div>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 stats-card fade-in"
-                onclick="window.location='{{ route('wilayahTugas.index') }}'">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div class="flex-grow-1">
-                            <p class="text-muted mb-2 text-uppercase fw-semibold"
-                                style="font-size: 0.8rem; letter-spacing: 0.5px;">
-                                Wilayah Tugas
-                            </p>
-                            <h2 class="mb-0 stats-number text-primary">{{ number_format($totalWilayahTugas ?? 0) }}</h2>
-                        </div>
-                        <div class="icon-box bg-primary bg-opacity-10 text-primary">
-                            <i class="bi bi-geo-alt-fill"></i>
-                        </div>
+    <div class="row g-3 mb-4">
+    
+    {{-- Card 1: Wilayah Tugas --}}
+    <div class="col-xl-3 col-md-6"> 
+        <div class="card border-0 shadow-sm h-100 stats-card fade-in"
+            onclick="window.location='{{ route('wilayahTugas.index') }}'">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="flex-grow-1">
+                        <p class="text-muted mb-2 text-uppercase fw-semibold"
+                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Wilayah Tugas
+                        </p>
+                        <h2 class="mb-0 stats-number text-primary" style="font-size: 2.8rem;">
+                            {{ number_format($totalWilayahTugas ?? 0) }}</h2>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                        <small class="text-muted">
-                            <i class="bi bi-clock-history"></i> Update terbaru
-                        </small>
-                        <a href="{{ route('wilayahTugas.index') }}"
-                            class="text-decoration-none text-primary fw-semibold small detail-link">
-                            Detail <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
+                    <div class="icon-box bg-primary bg-opacity-10 text-primary"
+                        style="width: 70px; height: 70px; border-radius: 18px;">
+                        <i class="bi bi-geo-alt-fill" style="font-size: 2.2rem;"></i>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 stats-card fade-in"
-                onclick="window.location='{{ route('dsrt.index') }}'">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div class="flex-grow-1">
-                            <p class="text-muted mb-2 text-uppercase fw-semibold"
-                                style="font-size: 0.8rem; letter-spacing: 0.5px;">
-                                Sampel RT (DSRT)
-                            </p>
-                            <h2 class="mb-0 stats-number text-success">{{ number_format($totalDsrt ?? 0) }}</h2>
-                        </div>
-                        <div class="icon-box bg-success bg-opacity-10 text-success">
-                            <i class="bi bi-file-earmark-text-fill"></i>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                        <small class="text-muted">
-                            <i class="bi bi-graph-up"></i> Total sampel
-                        </small>
-                        <a href="{{ route('dsrt.index') }}"
-                            class="text-decoration-none text-success fw-semibold small detail-link">
-                            Detail <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 stats-card fade-in"
-                onclick="window.location='{{ route('responden.index') }}'">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div class="flex-grow-1">
-                            <p class="text-muted mb-2 text-uppercase fw-semibold"
-                                style="font-size: 0.8rem; letter-spacing: 0.5px;">
-                                Total Responden
-                            </p>
-                            <h2 class="mb-0 stats-number text-warning">{{ number_format($totalResponden ?? 0) }}</h2>
-                        </div>
-                        <div class="icon-box bg-warning bg-opacity-10 text-warning">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                        <small class="text-muted">
-                            <i class="bi bi-person-check"></i> Data terkumpul
-                        </small>
-                        <a href="{{ route('responden.index') }}"
-                            class="text-decoration-none text-warning fw-semibold small detail-link">
-                            Detail <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="card border-0 shadow-sm h-100 stats-card fade-in"
-                onclick="window.location='{{ route('pengguna.index') }}'">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div class="flex-grow-1">
-                            <p class="text-muted mb-2 text-uppercase fw-semibold"
-                                style="font-size: 0.8rem; letter-spacing: 0.5px;">
-                                Pengguna Sistem
-                            </p>
-                            <h2 class="mb-0 stats-number text-info">{{ number_format($totalPengguna ?? 0) }}</h2>
-                        </div>
-                        <div class="icon-box bg-info bg-opacity-10 text-info">
-                            <i class="bi bi-person-fill-gear"></i>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                        <small class="text-muted">
-                            <i class="bi bi-shield-check"></i> Akun aktif
-                        </small>
-                        <a href="{{ route('pengguna.index') }}"
-                            class="text-decoration-none text-info fw-semibold small detail-link">
-                            Detail <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
+                <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                        <i class="bi bi-clock-history"></i> Update terbaru
+                    </small>
+                    <a href="{{ route('wilayahTugas.index') }}"
+                        class="text-decoration-none text-primary fw-semibold small detail-link"
+                        style="font-size: 0.85rem;">
+                        Detail <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm fade-in">
-                <div class="card-header bg-white border-bottom">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-circle bg-warning bg-opacity-10 text-warning me-3">
-                            <i class="bi bi-lightning-charge-fill"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold">Aksi Cepat</h5>
-                            <small class="text-muted">Tambahkan data baru dengan cepat</small>
-                        </div>
+    {{-- Card 2: Sampel RT (DSRT) --}}
+    <div class="col-xl-3 col-md-6"> 
+        <div class="card border-0 shadow-sm h-100 stats-card fade-in"
+            onclick="window.location='{{ route('dsrt.index') }}'">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="flex-grow-1">
+                        <p class="text-muted mb-2 text-uppercase fw-semibold"
+                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Sampel RT (DSRT)
+                        </p>
+                        <h2 class="mb-0 stats-number text-success" style="font-size: 2.8rem;">
+                            {{ number_format($totalDsrt ?? 0) }}</h2>
+                    </div>
+                    <div class="icon-box bg-success bg-opacity-10 text-success"
+                        style="width: 70px; height: 70px; border-radius: 18px;">
+                        <i class="bi bi-file-earmark-text-fill" style="font-size: 2.2rem;"></i>
                     </div>
                 </div>
-                <div class="card-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-6 col-lg-3">
-                            <a href="{{ route('wilayahTugas.create') }}"
-                                class="btn btn-outline-primary w-100 py-3 quick-action-btn">
-                                <i class="bi bi-geo-alt-fill fs-3 d-block mb-2"></i>
-                                <span class="fw-semibold d-block">Wilayah Tugas</span>
-                                <small class="text-muted">Tambah baru</small>
-                            </a>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <a href="{{ route('dsrt.create') }}"
-                                class="btn btn-outline-success w-100 py-3 quick-action-btn">
-                                <i class="bi bi-file-earmark-text-fill fs-3 d-block mb-2"></i>
-                                <span class="fw-semibold d-block">Sampel RT</span>
-                                <small class="text-muted">Tambah baru</small>
-                            </a>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <a href="{{ route('responden.create') }}"
-                                class="btn btn-outline-warning w-100 py-3 quick-action-btn">
-                                <i class="bi bi-person-plus-fill fs-3 d-block mb-2"></i>
-                                <span class="fw-semibold d-block">Responden</span>
-                                <small class="text-muted">Tambah baru</small>
-                            </a>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <a href="{{ route('pengguna.create') }}"
-                                class="btn btn-outline-info w-100 py-3 quick-action-btn">
-                                <i class="bi bi-person-fill-add fs-3 d-block mb-2"></i>
-                                <span class="fw-semibold d-block">Pengguna</span>
-                                <small class="text-muted">Tambah baru</small>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm h-100 fade-in">
-                <div class="card-header bg-white border-bottom">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-circle bg-info bg-opacity-10 text-info me-3">
-                            <i class="bi bi-info-circle-fill"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-0 fw-bold">Informasi Sistem</h5>
-                            <small class="text-muted">Status & aktivitas</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-4">
-                    <ul class="list-unstyled mb-0">
-                        <li class="system-info-item d-flex align-items-center">
-                            <div class="icon-sm bg-success bg-opacity-10 text-success rounded-circle me-3">
-                                <i class="bi bi-check-circle-fill"></i>
-                            </div>
-                            <div>
-                                <div class="fw-semibold">Sistem Aktif</div>
-                                <small class="text-muted">Berjalan normal</small>
-                            </div>
-                        </li>
-                        <li class="system-info-item d-flex align-items-center">
-                            <div class="icon-sm bg-primary bg-opacity-10 text-primary rounded-circle me-3">
-                                <i class="bi bi-database-fill"></i>
-                            </div>
-                            <div>
-                                <div class="fw-semibold">Database</div>
-                                <small class="text-muted">Terkoneksi</small>
-                            </div>
-                        </li>
-                        <li class="system-info-item d-flex align-items-center">
-                            <div class="icon-sm bg-warning bg-opacity-10 text-warning rounded-circle me-3">
-                                <i class="bi bi-person-circle"></i>
-                            </div>
-                            <div>
-                                <div class="fw-semibold">Pengguna Aktif</div>
-                                <small class="text-muted">{{ Auth::user()->name ?? 'Administrator' }}</small>
-                            </div>
-                        </li>
-                        <li class="system-info-item d-flex align-items-center">
-                            <div class="icon-sm bg-info bg-opacity-10 text-info rounded-circle me-3">
-                                <i class="bi bi-calendar-event"></i>
-                            </div>
-                            <div>
-                                <div class="fw-semibold">Versi Sistem</div>
-                                <small class="text-muted">SEDAP v1.0.0</small>
-                            </div>
-                        </li>
-                    </ul>
+                <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                        <i class="bi bi-graph-up"></i> Total sampel
+                    </small>
+                    <a href="{{ route('dsrt.index') }}"
+                        class="text-decoration-none text-success fw-semibold small detail-link"
+                        style="font-size: 0.85rem;">
+                        Detail <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-4 mt-2">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm fade-in">
-                <div class="card-header bg-white border-bottom">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-graph-up text-success me-2"></i>
-                        Ringkasan Aktivitas
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row text-center">
-                        <div class="col-md-3">
-                            <div class="p-3 system-info-item">
-                                <i class="bi bi-clipboard-data text-primary fs-1 mb-2 d-block activity-icon"></i>
-                                <h4 class="fw-bold mb-1"
-                                    style="background: linear-gradient(135deg, #007bff, #0056b3); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                                    {{ $totalWilayahTugas ?? 0 }}
-                                </h4>
-                                <small class="text-muted">Total Wilayah</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="p-3 system-info-item">
-                                <i class="bi bi-file-earmark-check text-success fs-1 mb-2 d-block activity-icon"></i>
-                                <h4 class="fw-bold mb-1"
-                                    style="background: linear-gradient(135deg, #28a745, #218838); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                                    {{ $totalDsrt ?? 0 }}
-                                </h4>
-                                <small class="text-muted">Sampel Terdaftar</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="p-3 system-info-item">
-                                <i class="bi bi-people text-warning fs-1 mb-2 d-block activity-icon"></i>
-                                <h4 class="fw-bold mb-1"
-                                    style="background: linear-gradient(135deg, #ffc107, #ff9800); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                                    {{ $totalResponden ?? 0 }}
-                                </h4>
-                                <small class="text-muted">Data Responden</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="p-3 system-info-item">
-                                <i class="bi bi-person-badge text-info fs-1 mb-2 d-block activity-icon"></i>
-                                <h4 class="fw-bold mb-1"
-                                    style="background: linear-gradient(135deg, #17a2b8, #138496); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                                    {{ $totalPengguna ?? 0 }}
-                                </h4>
-                                <small class="text-muted">Pengguna Aktif</small>
-                            </div>
-                        </div>
+    {{-- Card 3: Total Responden --}}
+    <div class="col-xl-3 col-md-6"> 
+        <div class="card border-0 shadow-sm h-100 stats-card fade-in"
+            onclick="window.location='{{ route('responden.index') }}'">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="flex-grow-1">
+                        <p class="text-muted mb-2 text-uppercase fw-semibold"
+                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Total Responden
+                        </p>
+                        <h2 class="mb-0 stats-number text-warning" style="font-size: 2.8rem;">
+                            {{ number_format($totalResponden ?? 0) }}</h2>
                     </div>
+                    <div class="icon-box bg-warning bg-opacity-10 text-warning"
+                        style="width: 70px; height: 70px; border-radius: 18px;">
+                        <i class="bi bi-people-fill" style="font-size: 2.2rem;"></i>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                        <i class="bi bi-person-check"></i> Data terkumpul
+                    </small>
+                    <a href="{{ route('responden.index') }}"
+                        class="text-decoration-none text-warning fw-semibold small detail-link"
+                        style="font-size: 0.85rem;">
+                        Detail <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-
+    {{-- Card 4: Aksi Cepat (Grid 3 Kolom Horizontal) - Disesuaikan dengan Pola Card 3 --}}
+<div class="col-xl-3 col-md-6"> 
+    <div class="card border-0 shadow-sm h-100 stats-card fade-in">
+        <div class="card-body p-4">
+            {{-- Bagian 1: Header Ringkas (Mengganti card-header lama) --}}
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="flex-grow-1">
+                    <p class="text-muted mb-2 text-uppercase fw-semibold"
+                        style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        Aksi Cepat
+                    </p>
+                </div>
+            </div>
+            
+            {{-- Bagian 2: Tombol Aksi (Body Konten Utama) --}}
+            <div class="row g-2 text-center mb-3"> 
+                
+                {{-- Tombol 1: Tambah Wilayah (col-4) --}}
+                <div class="col-4">
+                    <a href="{{ route('wilayahTugas.create') }}" 
+                       class="btn btn-outline-primary btn-sm quick-action-btn w-100 p-2"
+                       title="Tambah Wilayah">
+                        <i class="bi bi-geo-alt-fill d-block mb-1" style="font-size: 1.1rem;"></i>
+                        <span style="font-size: 0.65rem; font-weight: 600;">Wilayah</span>
+                    </a>
+                </div>
+                
+                {{-- Tombol 2: Tambah Sampel RT (col-4) --}}
+                <div class="col-4">
+                    <a href="{{ route('dsrt.create') }}" 
+                       class="btn btn-outline-success btn-sm quick-action-btn w-100 p-2"
+                       title="Tambah Sampel RT">
+                        <i class="bi bi-file-earmark-text-fill d-block mb-1" style="font-size: 1.1rem;"></i>
+                        <span style="font-size: 0.65rem; font-weight: 600;">Sampel RT</span>
+                    </a>
+                </div>
+                
+                {{-- Tombol 3: Tambah Responden (col-4) --}}
+                <div class="col-4">
+                    <a href="{{ route('responden.create') }}" 
+                       class="btn btn-outline-warning btn-sm quick-action-btn w-100 p-2"
+                       title="Tambah Responden">
+                        <i class="bi bi-person-plus-fill d-block mb-1" style="font-size: 1.1rem;"></i>
+                        <span style="font-size: 0.65rem; font-weight: 600;">Responden</span>
+                    </a>
+                </div>
+                
+            </div>
+            
+            {{-- Bagian 3: Footer Rinci (Dibuat konsisten dengan Card 3) --}}
+            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                <small class="text-muted" style="font-size: 0.8rem;">
+                    <i class="bi bi-plus-circle"></i> tambah data
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -684,26 +557,26 @@
 
             if (clockElement) {
                 // Gunakan waktu lokal browser untuk real-time, ini akan lebih akurat di sisi klien
-                const now = new Date(); 
-                
+                const now = new Date();
+
                 // Opsi untuk format jam 24 jam (HH:MM:SS)
-                const timeOptions = { 
-                    hour: '2-digit', 
-                    minute: '2-digit', 
+                const timeOptions = {
+                    hour: '2-digit',
+                    minute: '2-digit',
                     second: '2-digit',
                     hour12: false
                 };
 
                 // Opsi untuk format tanggal (dddd, D MMMM Y) - menyesuaikan dengan PHP isoFormat
                 const dateOptions = {
-                    weekday: 'long', 
-                    day: 'numeric', 
-                    month: 'long', 
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
                     year: 'numeric'
                 };
 
                 // Format waktu ke H:i:s dan tanggal ke dddd, D MMMM Y (menggunakan locale ID untuk bahasa Indonesia)
-                const timeString = now.toLocaleTimeString('id-ID', timeOptions); 
+                const timeString = now.toLocaleTimeString('id-ID', timeOptions);
                 const dateString = now.toLocaleDateString('id-ID', dateOptions);
 
                 // Update jam
@@ -715,12 +588,12 @@
                 }
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             // >>> Real-time Clock Initialization <<<
             updateClock();
             // Perbarui jam setiap 1 detik
-            setInterval(updateClock, 1000); 
+            setInterval(updateClock, 1000);
 
             // Smooth scroll reveal animation
             const observer = new IntersectionObserver((entries) => {
@@ -735,13 +608,6 @@
                 threshold: 0.1
             });
 
-            // Observe all fade-in elements
-            document.querySelectorAll('.fade-in').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease-out';
-                observer.observe(el);
-            });
 
             // Stats cards click handler
             const statsCards = document.querySelectorAll('.stats-card');

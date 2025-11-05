@@ -19,22 +19,13 @@
             padding-bottom: 1.2rem;
         }
 
-        /* Smooth Page Load Animation (Untuk div.fade-in) */
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
+        .card .header-section {
+            padding: 1.25rem;
+            color: white;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
         
         /* Mengaplikasikan style pada card form */
         .card {
@@ -82,9 +73,8 @@
         <form method="POST" action="{{ route('dsrt.store') }}">
             @csrf
 
-            {{-- HEADER CARD DENGAN JUDUL YANG LEBIH JELAS --}}
-            <div class="card-header">
-                <h5 class="mb-0 text-primary">
+            <div class="header-section bg-primary text-white">
+                <h5 class="mb-0">
                     <i class="bi bi-person-fill-add me-2"></i> Pengisian Data Sampel Rumah Tangga Baru
                 </h5>
             </div>
@@ -207,14 +197,6 @@
                 });
             }, {
                 threshold: 0.1
-            });
-
-            // Observe all fade-in elements
-            document.querySelectorAll('.fade-in').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease-out';
-                observer.observe(el);
             });
             
             // Memastikan fungsi showLoading/hideLoading global tersedia jika form disubmit

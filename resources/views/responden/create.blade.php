@@ -21,23 +21,6 @@
             padding-bottom: 1.2rem;
         }
 
-        /* Smooth Page Load Animation (Untuk div.fade-in) */
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
         /* Mengaplikasikan style pada card form */
         .card {
             border: none;
@@ -365,13 +348,6 @@
                 threshold: 0.1
             });
 
-            // Observe all fade-in elements
-            document.querySelectorAll('.fade-in').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease-out';
-                observer.observe(el);
-            });
             
             // Memastikan fungsi showLoading/hideLoading global tersedia jika form disubmit
             const form = document.querySelector('form');

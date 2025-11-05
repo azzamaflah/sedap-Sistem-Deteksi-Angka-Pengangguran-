@@ -18,22 +18,6 @@
         }
 
         /* Smooth Page Load Animation (Untuk div.fade-in) */
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         /* System Info Item (Digunakan untuk highlight baris di modal) */
         .system-info-item {
             transition: all 0.3s ease;
@@ -134,6 +118,7 @@
             /* Menggunakan gradient primary (biru) untuk konsistensi */
             background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: white;
+            z-index: 0;
         }
 
         .btn-add:hover {
@@ -159,7 +144,7 @@
             font-weight: bold;
             box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
             animation: pulse 2s infinite;
-            z-index: 99; /* Z-index sangat tinggi */
+            z-index: 100; /* Z-index sangat tinggi */
         }
 
         @keyframes pulse {
@@ -573,7 +558,7 @@
     <div class="modal fade" id="modalImport" tabindex="-1" aria-labelledby="modalImportLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-info text-white">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalImportLabel">
                         <i class="bi bi-file-earmark-arrow-up"></i> Import Data Responden
                     </h5>
@@ -678,13 +663,7 @@
                 threshold: 0.1
             });
 
-            // Observe all fade-in elements
-            document.querySelectorAll('.fade-in').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease-out';
-                observer.observe(el);
-            });
+    
             
             // Bootstrap Tooltip
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
