@@ -9,44 +9,33 @@
 
     <link rel="shortcut icon" href="{{ asset('logov.png') }}" type="image/x-icon">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy"
         content="
         default-src 'self';
         script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
         style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
-        font-src 'self' https://cdn.jsdelivr.net;
+        font-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
         img-src 'self' data: https:;
-        connect-src 'self';
+        connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
     ">
 
-    <!-- SEO Meta Tags -->
     <meta name="description" content="SEDAP - Sistem Deteksi Angka Kemiskinan">
     <meta name="author" content="BPS Kabupaten Bantul">
 
-    <!-- Title -->
     <title>@yield('title', 'Dashboard') - SEDAP</title>
 
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha512-b2QcS5SsA8tZodcDtGRELiGv5SaKSk1vDHDaQRda0htPYWZ6046lr3kJ5bAAQdpV2mmA/4v0wQF9MyU6/pDIAg=="
         crossorigin="anonymous">
 
-    <!-- Bootstrap Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.2/font/bootstrap-icons.min.css"
-        rel="stylesheet"
-        integrity="sha512-D1liES3uvDpPrgk7vXR/hR/sukGn7EtDWEyvpdLsyalQYq6v6YUsTUJmku7B4rcuQ11hMJVJl2OUhduGTNqYOQ=="
-        crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet">
 
 
     @yield('styles')
 
-    <!-- Main Layout Styles -->
     <style>
         :root {
             --sidebar-width: 280px;
@@ -385,24 +374,18 @@
 </head>
 
 <body>
-    <!-- Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay">
         <div class="loading-spinner"></div>
     </div>
 
-    <!-- Sidebar Mobile Overlay -->
     <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
-    <!-- Main App Container -->
     <div class="app-container">
-        <!-- Sidebar -->
         <div id="sidebar-container" class="sidebar-container">
             @include('layouts.sidebar')
         </div>
 
-        <!-- Main Content Wrapper -->
         <div class="main-wrapper">
-            <!-- Header -->
             <header class="main-header">
                 <div class="header-left">
                     <button id="sidebar-toggle" class="btn btn-link d-md-none p-0 me-3">
@@ -412,7 +395,6 @@
                 </div>
 
                 <div class="header-actions">
-                    <!-- Breadcrumb -->
                     @hasSection('breadcrumb')
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb breadcrumb-nav">
@@ -423,16 +405,13 @@
                 </div>
             </header>
 
-            <!-- Main Content -->
             <main class="main-content">
-                <!-- Content Header -->
                 @hasSection('content-header')
                     <div class="content-header">
                         @yield('content-header')
                     </div>
                 @endif
 
-                <!-- Flash Messages -->
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i>
@@ -465,7 +444,6 @@
                     </div>
                 @endif
 
-                <!-- Validation Errors -->
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -479,93 +457,90 @@
                     </div>
                 @endif
 
-                <!-- Page Content -->
                 @yield('content')
             </main>
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
-    <!-- Custom JavaScript - CSP Safe Version -->
     <script>
         (function() {
-                'use strict';
+            'use strict';
 
-                // Global App Object - CSP Safe
-                window.SEDAP = {
-                    baseUrl: '{{ url('/') }}',
-                    csrfToken: '{{ csrf_token() }}',
-                    user: {!! json_encode(Auth::user() ?? null) !!}
-                };
-                // DOM Ready
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Sidebar Toggle for Mobile
-                    const sidebarToggle = document.getElementById('sidebar-toggle');
-                    const sidebarContainer = document.getElementById('sidebar-container');
-                    const sidebarOverlay = document.getElementById('sidebar-overlay');
+            // Global App Object - CSP Safe
+            window.SEDAP = {
+                baseUrl: '{{ url('/') }}',
+                csrfToken: '{{ csrf_token() }}',
+                user: {!! json_encode(Auth::user() ?? null) !!}
+            };
+            // DOM Ready
+            document.addEventListener('DOMContentLoaded', function() {
+                // Sidebar Toggle for Mobile
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                const sidebarContainer = document.getElementById('sidebar-container');
+                const sidebarOverlay = document.getElementById('sidebar-overlay');
 
-                    if (sidebarToggle) {
-                        sidebarToggle.addEventListener('click', function() {
-                            sidebarContainer.classList.toggle('show');
-                            sidebarOverlay.classList.toggle('show');
-                        });
-                    }
-
-                    if (sidebarOverlay) {
-                        sidebarOverlay.addEventListener('click', function() {
-                            sidebarContainer.classList.remove('show');
-                            sidebarOverlay.classList.remove('show');
-                        });
-                    }
-
-                    // Auto hide alerts after 5 seconds
-                    const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
-                    alerts.forEach(function(alert) {
-                        setTimeout(function() {
-                            const bsAlert = new bootstrap.Alert(alert);
-                            bsAlert.close();
-                        }, 5000);
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', function() {
+                        sidebarContainer.classList.toggle('show');
+                        sidebarOverlay.classList.toggle('show');
                     });
+                }
 
-                    // Loading overlay functions
-                    window.showLoading = function() {
-                        document.getElementById('loading-overlay').style.display = 'flex';
-                    };
-
-                    window.hideLoading = function() {
-                        document.getElementById('loading-overlay').style.display = 'none';
-                    };
-
-                    // Form submission loading
-                    document.querySelectorAll('form').forEach(function(form) {
-                        form.addEventListener('submit', function() {
-                            showLoading();
-                        });
+                if (sidebarOverlay) {
+                    sidebarOverlay.addEventListener('click', function() {
+                        sidebarContainer.classList.remove('show');
+                        sidebarOverlay.classList.remove('show');
                     });
+                }
 
-                    // AJAX Setup
-                    if (typeof axios !== 'undefined') {
-                        axios.defaults.headers.common['X-CSRF-TOKEN'] = SEDAP.csrfToken;
-                        axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-                    }
-
-                    // jQuery AJAX Setup (if jQuery is loaded)
-                    if (typeof $ !== 'undefined') {
-                        $.ajaxSetup({
-                            headers: {
-                                'X-CSRF-TOKEN': SEDAP.csrfToken,
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        });
-                    }
+                // Auto hide alerts after 5 seconds
+                const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+                alerts.forEach(function(alert) {
+                    setTimeout(function() {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }, 5000);
                 });
 
-                // Utility Functions
-                function showAlert(message, type = 'success') {
-                    const alertHtml = `
+                // Loading overlay functions
+                window.showLoading = function() {
+                    document.getElementById('loading-overlay').style.display = 'flex';
+                };
+
+                window.hideLoading = function() {
+                    document.getElementById('loading-overlay').style.display = 'none';
+                };
+
+                // Form submission loading
+                document.querySelectorAll('form').forEach(function(form) {
+                    form.addEventListener('submit', function() {
+                        showLoading();
+                    });
+                });
+
+                // AJAX Setup
+                if (typeof axios !== 'undefined') {
+                    axios.defaults.headers.common['X-CSRF-TOKEN'] = SEDAP.csrfToken;
+                    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+                }
+
+                // jQuery AJAX Setup (if jQuery is loaded)
+                if (typeof $ !== 'undefined') {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': SEDAP.csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                }
+            });
+
+            // Utility Functions
+            function showAlert(message, type = 'success') {
+                const alertHtml = `
                 <div class="alert alert-${type} alert-dismissible fade show" role="alert">
                     <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill'} me-2"></i>
                     ${message}
@@ -573,25 +548,29 @@
                 </div>
             `;
 
-                    const mainContent = document.querySelector('.main-content');
-                    mainContent.insertAdjacentHTML('afterbegin', alertHtml);
+                const mainContent = document.querySelector('.main-content');
+                mainContent.insertAdjacentHTML('afterbegin', alertHtml);
 
-                    // Auto hide after 5 seconds
-                    setTimeout(function() {
-                        const alert = mainContent.querySelector('.alert');
-                        if (alert) {
-                            const bsAlert = new bootstrap.Alert(alert);
-                            bsAlert.close();
-                        }
-                    }, 5000);
-                }
+                // Auto hide after 5 seconds
+                setTimeout(function() {
+                    const alert = mainContent.querySelector('.alert');
+                    if (alert) {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }
+                }, 5000);
+            }
 
-                function confirmDelete(message = 'Apakah Anda yakin ingin menghapus data ini?') {
-                    return confirm(message);
-                }
+            window.confirmDelete = function(message = 'Apakah Anda yakin ingin menghapus data ini?') {
+                return confirm(message);
+            }
+
+            // Memastikan fungsi showAlert dan confirmDelete tersedia secara global
+            window.showAlert = showAlert;
+
+        })();
     </script>
 
-    <!-- Additional Scripts -->
     @yield('scripts')
 </body>
 

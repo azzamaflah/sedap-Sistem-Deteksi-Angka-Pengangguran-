@@ -27,23 +27,37 @@ class ConfigQuestController extends Controller
         $validated = $request->validate([
             'label' => 'required|string|max:500',
             'description' => 'nullable|string',
-            'type' => 'required|in:radio,text,textarea',
+            'type' => 'required|in:radio,dropdown,text,textarea',
             'options' => 'nullable|string',
-            'is_active' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean', 
             'order' => 'required|integer',
+            'conditional_target' => 'nullable|json', // Pastikan divalidasi sebagai JSON
         ]);
 
         $quest->label = $validated['label'];
         $quest->description = $validated['description'];
         $quest->type = $validated['type'];
         $quest->order = $validated['order'];
-        $quest->is_active = $request->has('is_active');
+        
+        $quest->is_active = $request->boolean('is_active');
 
-        // Parse options jika type = radio
-        if ($validated['type'] === 'radio' && !empty($validated['options'])) {
+        // Parsing options jika type adalah 'radio' ATAU 'dropdown'
+        if (in_array($validated['type'], ['radio', 'dropdown']) && !empty($validated['options'])) {
             $quest->options = array_map('trim', explode(',', $validated['options']));
         } else {
             $quest->options = null;
+        }
+
+        // PERBAIKAN KRUSIAL: Menyimpan conditional target
+        if ($request->has('conditional_target') && !empty($request->conditional_target)) {
+            // Karena sudah divalidasi sebagai JSON, kita decode
+            $decodedTarget = json_decode($request->conditional_target, true);
+            
+            // Simpan ke model (Laravel akan meng-cast ke format JSON database)
+            $quest->conditional_target = $decodedTarget;
+        } else {
+            // Jika field tidak ada atau kosong (aturan dihapus), set null
+            $quest->conditional_target = null;
         }
 
         $quest->save();
@@ -90,7 +104,8 @@ class ConfigQuestController extends Controller
         $rumus->deskripsi = $validated['deskripsi'];
         $rumus->kondisi_bekerja = json_decode($validated['kondisi_bekerja'], true);
         $rumus->kondisi_pengangguran = json_decode($validated['kondisi_pengangguran'], true);
-        $rumus->is_active = $request->has('is_active');
+        
+        $rumus->is_active = $request->boolean('is_active'); 
 
         $rumus->save();
 

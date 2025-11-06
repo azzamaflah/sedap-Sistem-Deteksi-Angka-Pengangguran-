@@ -7,7 +7,7 @@ use App\Models\Kecamatan;
 use App\Models\Desa;
 use App\Models\WilayahTugas;
 use App\Models\Dsrt;
-use App\Models\ConfigQuest; // TAMBAHKAN INI
+use App\Models\ConfigQuest;
 use Illuminate\Http\Request;
 use App\Exports\RespondenTemplateExport;
 use App\Imports\RespondenImport;
@@ -38,13 +38,14 @@ class RespondenController extends Controller
     {
         $kecamatan = Kecamatan::all();
 
-        // TAMBAHKAN INI: Load quest yang aktif
-        $quests = ConfigQuest::getActiveQuest();
+        // Load quest yang aktif
+        // Catatan: Pastikan ConfigQuest::getActiveQuest() mengembalikan array/collection
+        $quests = ConfigQuest::where('is_active', true)->orderBy('order')->get();
 
         return view('responden.create', compact('kecamatan', 'quests'));
     }
 
-    // AJAX methods tetap sama...
+    // AJAX methods (dibiarkan tidak berubah karena sudah benar)
     public function getDesaByKecamatan($id_kec)
     {
         $desa = Desa::where('id_kec', $id_kec)->get();
@@ -91,11 +92,13 @@ class RespondenController extends Controller
             'nama_sample' => 'required|string|max:255',
         ];
 
-        // TAMBAHKAN: Dynamic validation berdasarkan quest aktif
-        $quests = ConfigQuest::getActiveQuest();
+        // Dynamic validation berdasarkan quest aktif
+        $quests = ConfigQuest::where('is_active', true)->get();
         foreach ($quests as $quest) {
-            if ($quest->type === 'radio') {
-                $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->getOptionsArray());
+            // PERBAIKAN: Validasi tipe 'radio' ATAU 'dropdown'
+            if (in_array($quest->type, ['radio', 'dropdown'])) {
+                // Pastikan getOptionsArray() mengembalikan array yang benar
+                $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->options);
             } else {
                 $rules[$quest->key] = 'nullable|string|max:255';
             }
@@ -130,8 +133,8 @@ class RespondenController extends Controller
             ->distinct()
             ->get();
 
-        // TAMBAHKAN INI: Load quest yang aktif
-        $quests = ConfigQuest::getActiveQuest();
+        // Load quest yang aktif
+        $quests = ConfigQuest::where('is_active', true)->orderBy('order')->get();
 
         return view('responden.edit', compact('responden', 'kecamatan', 'desa', 'blokSensus', 'nks', 'nurt', 'quests'));
     }
@@ -150,11 +153,12 @@ class RespondenController extends Controller
             'nama_sample' => 'required|string|max:255',
         ];
 
-        // TAMBAHKAN: Dynamic validation
-        $quests = ConfigQuest::getActiveQuest();
+        // Dynamic validation
+        $quests = ConfigQuest::where('is_active', true)->get();
         foreach ($quests as $quest) {
-            if ($quest->type === 'radio') {
-                $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->getOptionsArray());
+            // PERBAIKAN: Validasi tipe 'radio' ATAU 'dropdown'
+            if (in_array($quest->type, ['radio', 'dropdown'])) {
+                 $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->options);
             } else {
                 $rules[$quest->key] = 'nullable|string|max:255';
             }

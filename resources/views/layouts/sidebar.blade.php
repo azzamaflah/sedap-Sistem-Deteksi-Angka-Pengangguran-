@@ -54,26 +54,22 @@
                 @endif
             @endauth
 
-            <!-- Contoh tambahan di sidebar atau menu -->
             @if (Auth::user()->isAdmin())
-                <div class="admin-menu mb-3">
-                    <h6 class="text-muted">⚙️ ADMIN PANEL</h6>
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <a href="{{ route('admin.config.quest') }}" class="text-decoration-none">
-                                📝 Kelola Quest
+                <div class="admin-menu">
+                    <h6 class="admin-menu-title">⚙️ ADMIN PANEL</h6>
+                    <ul class="admin-menu-list">
+                        <li class="admin-menu-item">
+                            <a href="{{ route('admin.config.quest') }}" class="admin-menu-link">
+                                <i class="bi bi-pen menu-icon"></i>
+                                <span>Kelola Quest</span>
                             </a>
                         </li>
-                        <li class="list-group-item">
-                            <a href="{{ route('admin.config.rumus') }}" class="text-decoration-none">
-                                🧮 Kelola Rumus Status
+                        <li class="admin-menu-item">
+                            <a href="{{ route('admin.config.rumus') }}" class="admin-menu-link">
+                                <i class="bi bi-calculator menu-icon"></i>
+                                <span>Kelola Rumus Status</span>
                             </a>
                         </li>
-                            {{-- <li class="list-group-item">
-                                <a href="{{ route('users.index') }}" class="text-decoration-none">
-                                    👥 Manajemen User
-                                </a>
-                            </li> --}}
                     </ul>
                 </div>
             @endif
@@ -118,6 +114,7 @@
     </div>
 </aside>
 
+
 <div id="sidebarPopup" class="sidebar-popup-menu">
     <div class="sidebar-popup-header">
         <span id="popupTitle" class="sidebar-popup-title">Menu</span>
@@ -144,6 +141,118 @@
         --accent-secondary: #8b5cf6;
         --transition-speed: 0.3s;
         --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+
+    .admin-menu {
+        margin-top: 20px;
+    }
+
+    .admin-menu-title {
+        font-size: 1rem;
+        font-weight: bold;
+        color: var(--sidebar-text-muted);
+        margin-bottom: 15px;
+        padding-left: 1.5rem;
+    }
+
+    .admin-menu-list {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    .admin-menu-item {
+        margin: 10px 0;
+    }
+
+    .admin-menu-link {
+        display: flex;
+        align-items: center;
+        padding: 10px 1.25rem;
+        color: var(--sidebar-text);
+        text-decoration: none;
+        border-radius: 8px;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .admin-menu-link:hover {
+        background-color: var(--sidebar-hover);
+        color: #fff;
+    }
+
+    .admin-menu-link i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .admin-menu-item .admin-menu-link.active {
+        background: var(--sidebar-active);
+        font-weight: bold;
+    }
+
+    .sidebar-footer {
+        border-top: 1px solid var(--sidebar-border);
+        padding: 1rem 1.5rem;
+        background-color: var(--sidebar-bg);
+    }
+
+    .user-profile-btn {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        width: 100%;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .user-profile-btn:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        margin-right: 10px;
+        background-color: #6366f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .user-avatar i {
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .user-info {
+        flex: 1;
+    }
+
+    .user-name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #fff;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .user-email {
+        font-size: 0.75rem;
+        color: var(--sidebar-text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .profile-arrow {
+        font-size: 1rem;
+        color: var(--sidebar-text);
     }
 
     /* ========================================

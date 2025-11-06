@@ -62,7 +62,7 @@ class Responden extends Model
      */
     public function hitungStatus()
     {
-        // Ambil rumus yang aktif
+        // 1. Ambil rumus yang aktif
         $rumus = ConfigRumus::getActiveRumus();
 
         if (!$rumus) {
@@ -71,39 +71,26 @@ class Responden extends Model
             return;
         }
 
-        // Siapkan data untuk evaluasi
-        $data = [
-            'r7_1' => $this->r7_1,
-            'r7_2' => $this->r7_2,
-            'r7_3' => $this->r7_3,
-            'r8_1' => $this->r8_1,
-            'r9_1' => $this->r9_1,
-            'r9_3' => $this->r9_3,
-            'r20_1' => $this->r20_1,
-            'r20_2' => $this->r20_2,
-            'r20_4' => $this->r20_4,
-        ];
-
-        // Evaluasi kondisi Bekerja
-        if ($rumus->evaluateCondition($data, 'bekerja')) {
+        // 2. Evaluasi kondisi Bekerja (Menggunakan evaluateKondisi dan mengirimkan $this)
+        if ($rumus->evaluateKondisi($rumus->kondisi_bekerja, $this)) {
             $this->bekerja = 'Bekerja';
             $this->pengangguran = null;
 
-            // Logic Quest 7-9 tetap sama
+            // Logic Quest 7-9 tetap sama (jika Bekerja)
             if ($this->r20_1 == 'Ya' && $this->r20_2 == 'Ya') {
                 $this->r20_4 = null; // Quest 9 tidak diisi
             }
         }
-        // Evaluasi kondisi Pengangguran
-        elseif ($rumus->evaluateCondition($data, 'pengangguran')) {
+        // 3. Evaluasi kondisi Pengangguran
+        elseif ($rumus->evaluateKondisi($rumus->kondisi_pengangguran, $this)) {
             $this->bekerja = null;
             $this->pengangguran = 'Pengangguran';
 
-            // Reset Quest 5-6 karena tidak boleh diisi
+            // Reset Quest 5-6 karena tidak boleh diisi (jika Pengangguran)
             $this->r9_1 = null;
             $this->r9_3 = null;
         }
-        // Default
+        // 4. Default
         else {
             $this->bekerja = null;
             $this->pengangguran = null;
