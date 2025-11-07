@@ -1,5 +1,15 @@
 @extends('layouts.app')
 
+{{-- Tambahkan Title, Page Title, dan Breadcrumb --}}
+@section('title', 'Edit Responden')
+@section('page-title', 'Edit Data Responden')
+
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('responden.index') }}">Responden</a></li>
+    <li class="breadcrumb-item active">Edit</li>
+@endsection
+
 @section('content')
     <style>
         /* CSS yang sudah ada */
@@ -12,7 +22,8 @@
 
         .form-section h5 {
             color: #495057;
-            border-bottom: 2px solid #ffc107;
+            /* PERUBAHAN 1: Border bawah H5 dari kuning menjadi biru primary */
+            border-bottom: 2px solid #007bff; /* Primary Blue */
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
@@ -27,7 +38,8 @@
         .quest-group {
             background: white;
             padding: 15px;
-            border-left: 4px solid #ffc107;
+            /* PERUBAHAN 2: Border kiri Quest Group dari kuning menjadi biru primary */
+            border-left: 4px solid #007bff; /* Primary Blue */
             margin-bottom: 15px;
             border-radius: 4px;
         }
@@ -50,18 +62,23 @@
             border-radius: 5px;
             font-weight: 600;
         }
+        
+        /* Menggunakan style dari layout utama untuk Card Header */
+        .card-header.bg-primary {
+            background-color: var(--accent-primary) !important; /* Memastikan warna header card Primary */
+        }
     </style>
 
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="card">
-                    <div class="card-header bg-warning">
-                        <h4>✏️ Edit Data Responden</h4>
+                <div class="card shadow-sm fade-in"> {{-- Tambahkan shadow dan fade-in untuk konsistensi --}}
+                    {{-- PERUBAHAN 3: Card Header menggunakan bg-primary standar --}}
+                    <div class="card-header bg-primary text-white py-3"> 
+                        <h5 class="mb-0">✏️ Edit Data Responden</h5>
                     </div>
 
                     <div class="card-body">
-                        <!-- Status Display -->
                         <div class="alert alert-info d-flex justify-content-between align-items-center">
                             <div>
                                 <strong>Status Saat Ini:</strong>
@@ -72,7 +89,8 @@
                                 @elseif($responden->pengangguran)
                                     <span class="status-badge bg-danger text-white">❌ {{ $responden->pengangguran }}</span>
                                 @else
-                                    <span class="status-badge bg-secondary text-white">⏳ Belum Ditentukan</span>
+                                    {{-- PERUBAHAN 4: Badge Belum Ditentukan menggunakan Primary/Info --}}
+                                    <span class="status-badge bg-primary text-white">⏳ Belum Ditentukan</span> 
                                 @endif
                             </div>
                         </div>
@@ -81,7 +99,6 @@
                             @csrf
                             @method('PUT')
 
-                            <!-- Section 1: Identitas Wilayah -->
                             <div class="form-section">
                                 <h5>📍 Identitas Wilayah</h5>
 
@@ -109,7 +126,6 @@
                                         <select name="id_desa" id="id_desa"
                                             class="form-select @error('id_desa') is-invalid @enderror" required>
                                             <option value="">-- Pilih Desa --</option>
-                                            {{-- Desa Awal di-fill oleh Controller, Desa selanjutnya di-fill oleh JS --}}
                                             @foreach ($desa as $d)
                                                 <option value="{{ $d->id_desa }}"
                                                     {{ ($responden->id_desa == $d->id_desa || old('id_desa') == $d->id_desa) ? 'selected' : '' }}>
@@ -187,16 +203,14 @@
                                 </div>
                             </div>
 
-                            <!-- Section 2: Kuesioner Ketenagakerjaan (Dynamic) -->
                             <div class="form-section">
                                 <h5>📋 Kuesioner Ketenagakerjaan</h5>
 
                                 @foreach ($quests as $quest)
                                     @if ($quest->is_active)
-                                        {{-- DITAMBAH: data-conditional-target untuk JS --}}
-                                        <div class="quest-group" id="quest-{{ $quest->key }}"
-                                             data-quest-key="{{ $quest->key }}"
-                                             data-conditional-target="{{ $quest->conditional_target ? json_encode($quest->conditional_target) : '{}' }}">
+                                        <div class="quest-group fade-in" id="quest-{{ $quest->key }}"
+                                            data-quest-key="{{ $quest->key }}"
+                                            data-conditional-target="{{ $quest->conditional_target ? json_encode($quest->conditional_target) : '{}' }}">
                                             
                                             <label class="quest-label">
                                                 {{ $quest->label }}
@@ -214,7 +228,6 @@
                                                 <div class="d-flex gap-3">
                                                     @foreach ($quest->options as $option)
                                                         <div class="form-check">
-                                                            {{-- DITAMBAH: class quest-input-trigger --}}
                                                             <input class="form-check-input quest-input quest-input-trigger" type="radio"
                                                                 name="{{ $quest->key }}"
                                                                 id="{{ $quest->key }}_{{ $option }}"
@@ -229,7 +242,6 @@
                                                 </div>
                                             
                                             @elseif ($quest->type === 'dropdown')
-                                                {{-- DITAMBAH: class quest-input-trigger --}}
                                                 <select name="{{ $quest->key }}" class="form-select quest-input quest-input-trigger" required>
                                                     <option value="">-- Pilih {{ $quest->label }} --</option>
                                                     @if(is_array($quest->options))
@@ -261,13 +273,12 @@
                                 @endforeach
                             </div>
 
-                            <!-- Buttons -->
                             <div class="d-flex justify-content-between">
                                 <a href="{{ route('responden.index') }}" class="btn btn-secondary">
-                                    ← Batal
+                                    <i class="bi bi-arrow-left me-2"></i> Batal
                                 </a>
-                                <button type="submit" class="btn btn-warning">
-                                    💾 Update Data
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save me-2"></i> Update Data
                                 </button>
                             </div>
                         </form>
@@ -296,10 +307,9 @@
             function resetDropdown(element) {
                 const placeholderName = element.id.replace('id_', '').toUpperCase();
                 element.innerHTML = '<option value="">-- Pilih ' + placeholderName + ' --</option>';
-                element.disabled = false; // Biarkan enable karena ini form edit, tapi hapus opsi non-default
+                element.disabled = false;
             }
 
-            // Mereset dropdown kaskade, dimulai dari elemen setelah 'startElement'
             function resetCascades(startElement = null) {
                 const elements = [idDesa, idBs, idNks, idNurt];
                 let shouldReset = false;
@@ -308,24 +318,21 @@
                     if (element === startElement) {
                         shouldReset = true; 
                     } else if (shouldReset) {
-                        // Di form edit, jangan reset jika ada data lama yang harus dipertahankan.
-                        // Tapi kita harus memastikan elemen yang 'lebih jauh' dari yang diubah direset.
                         resetDropdown(element);
                     }
                 });
             }
 
             function fetchData(url, targetElement, optionValueKey, optionLabelKey = null) {
+                window.showLoading();
                 return fetch(url)
                     .then(res => {
                         if (!res.ok) throw new Error('Network response was not ok: ' + res.statusText);
                         return res.json();
                     })
                     .then(data => {
-                        // Simpan nilai yang saat ini dipilih (untuk form edit)
                         const currentValue = targetElement.value;
                         
-                        // Bersihkan opsi lama (kecuali placeholder awal)
                         targetElement.innerHTML = '<option value="">-- Pilih ' + targetElement.id.replace('id_', '').toUpperCase() + ' --</option>';
 
                         data.forEach(item => {
@@ -334,26 +341,30 @@
                             targetElement.innerHTML += `<option value="${item[optionValueKey]}" ${selected}>${label}</option>`;
                         });
                         targetElement.disabled = false;
+                        window.hideLoading();
                         return data;
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
+                        window.hideLoading();
+                        // Tampilkan alert error jika ada fungsi showAlert global
+                        if(window.showAlert) {
+                            window.showAlert('Gagal memuat data wilayah. Cek koneksi API.', 'danger');
+                        }
                     });
             }
 
-            // Bindings Cascade Dropdown (Diperbaiki untuk Edit/Pre-fill)
-            
-            // NOTE: Di form edit, data Desa, BS, NKS, NURT awal sudah dimuat PHP. 
-            // Kita hanya perlu memastikan cascade berfungsi jika pengguna MENGUBAH Kecamatan.
-
+            // Bindings Cascade Dropdown 
             idKec.addEventListener('change', function() {
                 const kecId = this.value;
                 resetCascades(idKec); 
                 if (kecId) {
                     fetchData(`${baseUrl}/api/responden/desa/${kecId}`, idDesa, 'id_desa', 'nama_desa').then(() => {
-                        // Dipaksa reset cascades lagi karena JS harus mengambil alih dari PHP
-                        resetCascades(idKec); 
-                        idDesa.dispatchEvent(new Event('change'));
+                        // Trigger change pada idDesa hanya jika nilainya berbeda dengan data lama yang di-prefill
+                        // Di form edit, ini biasanya tidak diperlukan kecuali data berubah total
+                        if (idDesa.value) { 
+                           idDesa.dispatchEvent(new Event('change'));
+                        }
                     });
                 }
             });
@@ -363,7 +374,9 @@
                 resetCascades(idDesa);
                 if (desaId) {
                     fetchData(`${baseUrl}/api/responden/bloksensus/${desaId}`, idBs, 'id_bs').then(() => {
-                        idBs.dispatchEvent(new Event('change'));
+                        if (idBs.value) { 
+                            idBs.dispatchEvent(new Event('change'));
+                        }
                     });
                 }
             });
@@ -373,7 +386,9 @@
                 resetCascades(idBs);
                 if (bsId) {
                     fetchData(`${baseUrl}/api/responden/nks/${bsId}`, idNks, 'id_nks').then(() => {
-                        idNks.dispatchEvent(new Event('change'));
+                        if (idNks.value) { 
+                           idNks.dispatchEvent(new Event('change'));
+                        }
                     });
                 }
             });

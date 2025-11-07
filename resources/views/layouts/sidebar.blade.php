@@ -628,10 +628,29 @@
 
     .sidebar.collapsed .user-profile-btn {
         justify-content: center;
-        padding: 0.75rem;
-        width: auto;
-        margin: 0 auto;
+        padding: 0.875rem;
+        width: 55px;
+        margin: 0.5rem auto;
+        background: transparent;
+        border: none;
+        position: relative;
+        box-shadow: none;
     }
+
+    .sidebar.collapsed .user-profile-btn .user-avatar i {
+    font-size: 1.5rem; /* Sesuaikan ukuran ikon */
+    color: var(--sidebar-text); /* Gunakan warna teks standar */
+}
+
+    .sidebar.collapsed .user-profile-btn .user-avatar {
+    margin: 0; /* Hapus margin yang tidak diperlukan */
+    width: 32px; /* Ukuran yang lebih kecil/pas */
+    height: 32px;
+    background: transparent; /* Hilangkan background avatar */
+    border: none; /* Hilangkan border avatar */
+    box-shadow: none; /* Hilangkan shadow avatar */
+}
+
 
     .user-profile-btn:hover {
         background: rgba(255, 255, 255, 0.1);
@@ -641,8 +660,21 @@
     }
 
     .sidebar.collapsed .user-profile-btn:hover {
-        transform: scale(1.05);
+        background: var(--sidebar-hover); /* Gunakan efek hover menu link */
+    transform: none; /* Hapus transform: scale(1.05) */
+    box-shadow: none;
     }
+
+    .sidebar.collapsed .user-info,
+.sidebar.collapsed .profile-arrow {
+    display: none;
+}
+
+    .sidebar.collapsed .user-profile-btn[aria-expanded="true"] {
+    background: var(--sidebar-active); /* Gunakan warna aktif menu link */
+    box-shadow: 0 8px 16px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: none;
+}
 
     /* User Avatar */
     .user-avatar {
@@ -837,7 +869,6 @@
             0 10px 10px -5px rgba(0, 0, 0, 0.2);
         min-width: 100px;
         max-width: 90vh;
-        top: 20px;
         bottom: auto;
         height: auto;
         display: flex;
@@ -850,6 +881,14 @@
         **overflow-y: auto;
         overflow-x: hidden;
     }
+
+    .sidebar-popup-menu.show-from-footer {
+    top: auto; /* Tidak terikat di atas */
+    bottom: 1.25rem; /* Jarak dari bawah sidebar-footer */
+    /* Posisi Lurus Kanan Icon */
+    left: calc(var(--sidebar-collapsed-width) + 0.75rem);
+    /* Sedikit di atas footer agar tidak bentrok */
+}
 
     .sidebar-popup-menu.show {
         opacity: 1;
@@ -1067,9 +1106,7 @@
             if (!sidebarPopup) return;
 
             sidebarPopup.classList.remove('show');
-            if (sidebarOverlay && !isMobile()) {
-                sidebarOverlay.classList.remove('show');
-            }
+            sidebarPopup.classList.remove('show-from-footer');
         }
 
         function closeAllMenus() {
@@ -1134,6 +1171,7 @@
             // Menggunakan user-menu-popup-content agar stylingnya terisolasi (opsional)
             userMenuClone.classList.remove('user-dropdown-menu');
             userMenuClone.classList.add('show'); // Tambahkan kelas show untuk tampilan
+            sidebarPopup.classList.add('show-from-footer');
             userMenuClone.style.position = 'static'; // Penting: Reset posisi absolut/relatif
             userMenuClone.style.top = 'auto';
             userMenuClone.style.bottom = 'auto';

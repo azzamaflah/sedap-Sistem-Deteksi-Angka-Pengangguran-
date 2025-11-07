@@ -406,7 +406,7 @@
             </header>
 
             <main class="main-content">
-                @hasSection('content-header')
+                <!-- @hasSection('content-header')
                     <div class="content-header">
                         @yield('content-header')
                     </div>
@@ -455,7 +455,7 @@
                         </ul>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                @endif
+                @endif -->
 
                 @yield('content')
             </main>
