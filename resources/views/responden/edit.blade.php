@@ -2,6 +2,7 @@
 
 @section('content')
     <style>
+        /* CSS yang sudah ada */
         .form-section {
             background: #f8f9fa;
             padding: 20px;
@@ -14,6 +15,13 @@
             border-bottom: 2px solid #ffc107;
             padding-bottom: 10px;
             margin-bottom: 20px;
+        }
+
+        .quest-group.disabled-by-condition {
+            opacity: 0.5;
+            pointer-events: none;
+            user-select: none;
+            background: #fcfcfc;
         }
 
         .quest-group {
@@ -77,6 +85,7 @@
                             <div class="form-section">
                                 <h5>📍 Identitas Wilayah</h5>
 
+                                {{-- --- DROPDOWN WILAYAH --- --}}
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Kecamatan <span class="text-danger">*</span></label>
@@ -85,7 +94,7 @@
                                             <option value="">-- Pilih Kecamatan --</option>
                                             @foreach ($kecamatan as $kec)
                                                 <option value="{{ $kec->id_kec }}"
-                                                    {{ $responden->id_kec == $kec->id_kec ? 'selected' : '' }}>
+                                                    {{ ($responden->id_kec == $kec->id_kec || old('id_kec') == $kec->id_kec) ? 'selected' : '' }}>
                                                     {{ $kec->id_kec }} - {{ $kec->nama_kec }}
                                                 </option>
                                             @endforeach
@@ -100,9 +109,10 @@
                                         <select name="id_desa" id="id_desa"
                                             class="form-select @error('id_desa') is-invalid @enderror" required>
                                             <option value="">-- Pilih Desa --</option>
+                                            {{-- Desa Awal di-fill oleh Controller, Desa selanjutnya di-fill oleh JS --}}
                                             @foreach ($desa as $d)
                                                 <option value="{{ $d->id_desa }}"
-                                                    {{ $responden->id_desa == $d->id_desa ? 'selected' : '' }}>
+                                                    {{ ($responden->id_desa == $d->id_desa || old('id_desa') == $d->id_desa) ? 'selected' : '' }}>
                                                     {{ $d->id_desa }} - {{ $d->nama_desa }}
                                                 </option>
                                             @endforeach
@@ -121,7 +131,7 @@
                                             <option value="">-- Pilih BS --</option>
                                             @foreach ($blokSensus as $bs)
                                                 <option value="{{ $bs->id_bs }}"
-                                                    {{ $responden->id_bs == $bs->id_bs ? 'selected' : '' }}>
+                                                    {{ ($responden->id_bs == $bs->id_bs || old('id_bs') == $bs->id_bs) ? 'selected' : '' }}>
                                                     {{ $bs->id_bs }}
                                                 </option>
                                             @endforeach
@@ -138,7 +148,7 @@
                                             <option value="">-- Pilih NKS --</option>
                                             @foreach ($nks as $n)
                                                 <option value="{{ $n->id_nks }}"
-                                                    {{ $responden->id_nks == $n->id_nks ? 'selected' : '' }}>
+                                                    {{ ($responden->id_nks == $n->id_nks || old('id_nks') == $n->id_nks) ? 'selected' : '' }}>
                                                     {{ $n->id_nks }}
                                                 </option>
                                             @endforeach
@@ -155,7 +165,7 @@
                                             <option value="">-- Pilih NURT --</option>
                                             @foreach ($nurt as $nu)
                                                 <option value="{{ $nu->id_nurt }}"
-                                                    {{ $responden->id_nurt == $nu->id_nurt ? 'selected' : '' }}>
+                                                    {{ ($responden->id_nurt == $nu->id_nurt || old('id_nurt') == $nu->id_nurt) ? 'selected' : '' }}>
                                                     {{ $nu->id_nurt }}
                                                 </option>
                                             @endforeach
@@ -183,7 +193,11 @@
 
                                 @foreach ($quests as $quest)
                                     @if ($quest->is_active)
-                                        <div class="quest-group" id="quest-{{ $quest->key }}">
+                                        {{-- DITAMBAH: data-conditional-target untuk JS --}}
+                                        <div class="quest-group" id="quest-{{ $quest->key }}"
+                                             data-quest-key="{{ $quest->key }}"
+                                             data-conditional-target="{{ $quest->conditional_target ? json_encode($quest->conditional_target) : '{}' }}">
+                                            
                                             <label class="quest-label">
                                                 {{ $quest->label }}
                                             </label>
@@ -194,15 +208,18 @@
                                                 </div>
                                             @endif
 
+                                            {{-- --- Rendering Input Dinamis --- --}}
+
                                             @if ($quest->type === 'radio')
                                                 <div class="d-flex gap-3">
-                                                    @foreach ($quest->getOptionsArray() as $option)
+                                                    @foreach ($quest->options as $option)
                                                         <div class="form-check">
-                                                            <input class="form-check-input quest-input" type="radio"
+                                                            {{-- DITAMBAH: class quest-input-trigger --}}
+                                                            <input class="form-check-input quest-input quest-input-trigger" type="radio"
                                                                 name="{{ $quest->key }}"
                                                                 id="{{ $quest->key }}_{{ $option }}"
                                                                 value="{{ $option }}"
-                                                                {{ old($quest->key, $responden->{$quest->key}) == $option ? 'checked' : '' }}>
+                                                                {{ (old($quest->key, $responden->{$quest->key}) == $option) ? 'checked' : '' }}>
                                                             <label class="form-check-label"
                                                                 for="{{ $quest->key }}_{{ $option }}">
                                                                 {{ $option }}
@@ -210,6 +227,22 @@
                                                         </div>
                                                     @endforeach
                                                 </div>
+                                            
+                                            @elseif ($quest->type === 'dropdown')
+                                                {{-- DITAMBAH: class quest-input-trigger --}}
+                                                <select name="{{ $quest->key }}" class="form-select quest-input quest-input-trigger" required>
+                                                    <option value="">-- Pilih {{ $quest->label }} --</option>
+                                                    @if(is_array($quest->options))
+                                                        @foreach ($quest->options as $option)
+                                                            <option value="{{ $option }}"
+                                                                {{ (old($quest->key, $responden->{$quest->key}) == $option) ? 'selected' : '' }}>
+                                                                {{ $option }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                            
+                                            {{-- Tipe Text dan Textarea --}}
                                             @elseif($quest->type === 'text')
                                                 <input type="text" name="{{ $quest->key }}"
                                                     class="form-control quest-input"
@@ -244,94 +277,194 @@
         </div>
     </div>
 
+    @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Cascade Dropdown Logic (sama seperti create, tapi dengan pre-filled data)
+            // --- VARIABEL DAN SETUP ---
             const idKec = document.getElementById('id_kec');
             const idDesa = document.getElementById('id_desa');
             const idBs = document.getElementById('id_bs');
             const idNks = document.getElementById('id_nks');
             const idNurt = document.getElementById('id_nurt');
+            const baseUrl = window.SEDAP ? window.SEDAP.baseUrl : ''; 
+            const questInputs = document.querySelectorAll('.quest-input-trigger');
+            const allQuestGroups = document.querySelectorAll('.quest-group');
 
-            // Load Desa based on Kecamatan
+
+            // --- UTILITI CASCADE DROPDOWN ---
+
+            function resetDropdown(element) {
+                const placeholderName = element.id.replace('id_', '').toUpperCase();
+                element.innerHTML = '<option value="">-- Pilih ' + placeholderName + ' --</option>';
+                element.disabled = false; // Biarkan enable karena ini form edit, tapi hapus opsi non-default
+            }
+
+            // Mereset dropdown kaskade, dimulai dari elemen setelah 'startElement'
+            function resetCascades(startElement = null) {
+                const elements = [idDesa, idBs, idNks, idNurt];
+                let shouldReset = false;
+
+                elements.forEach(element => {
+                    if (element === startElement) {
+                        shouldReset = true; 
+                    } else if (shouldReset) {
+                        // Di form edit, jangan reset jika ada data lama yang harus dipertahankan.
+                        // Tapi kita harus memastikan elemen yang 'lebih jauh' dari yang diubah direset.
+                        resetDropdown(element);
+                    }
+                });
+            }
+
+            function fetchData(url, targetElement, optionValueKey, optionLabelKey = null) {
+                return fetch(url)
+                    .then(res => {
+                        if (!res.ok) throw new Error('Network response was not ok: ' + res.statusText);
+                        return res.json();
+                    })
+                    .then(data => {
+                        // Simpan nilai yang saat ini dipilih (untuk form edit)
+                        const currentValue = targetElement.value;
+                        
+                        // Bersihkan opsi lama (kecuali placeholder awal)
+                        targetElement.innerHTML = '<option value="">-- Pilih ' + targetElement.id.replace('id_', '').toUpperCase() + ' --</option>';
+
+                        data.forEach(item => {
+                            const label = optionLabelKey ? `${item[optionValueKey]} - ${item[optionLabelKey]}` : item[optionValueKey];
+                            const selected = item[optionValueKey] == currentValue ? 'selected' : '';
+                            targetElement.innerHTML += `<option value="${item[optionValueKey]}" ${selected}>${label}</option>`;
+                        });
+                        targetElement.disabled = false;
+                        return data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            }
+
+            // Bindings Cascade Dropdown (Diperbaiki untuk Edit/Pre-fill)
+            
+            // NOTE: Di form edit, data Desa, BS, NKS, NURT awal sudah dimuat PHP. 
+            // Kita hanya perlu memastikan cascade berfungsi jika pengguna MENGUBAH Kecamatan.
+
             idKec.addEventListener('change', function() {
                 const kecId = this.value;
-                const currentDesa = '{{ $responden->id_desa }}';
-
-                idDesa.innerHTML = '<option value="">-- Pilih Desa --</option>';
-
+                resetCascades(idKec); 
                 if (kecId) {
-                    fetch(`/responden/get-desa/${kecId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            data.forEach(desa => {
-                                const selected = desa.id_desa == currentDesa ? 'selected' : '';
-                                idDesa.innerHTML +=
-                                    `<option value="${desa.id_desa}" ${selected}>${desa.id_desa} - ${desa.nama_desa}</option>`;
-                            });
-                        });
+                    fetchData(`${baseUrl}/api/responden/desa/${kecId}`, idDesa, 'id_desa', 'nama_desa').then(() => {
+                        // Dipaksa reset cascades lagi karena JS harus mengambil alih dari PHP
+                        resetCascades(idKec); 
+                        idDesa.dispatchEvent(new Event('change'));
+                    });
                 }
             });
-
-            // Load Blok Sensus based on Desa
+            
             idDesa.addEventListener('change', function() {
                 const desaId = this.value;
-                const currentBs = '{{ $responden->id_bs }}';
-
-                idBs.innerHTML = '<option value="">-- Pilih BS --</option>';
-
+                resetCascades(idDesa);
                 if (desaId) {
-                    fetch(`/responden/get-blok-sensus/${desaId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            data.forEach(bs => {
-                                const selected = bs.id_bs == currentBs ? 'selected' : '';
-                                idBs.innerHTML +=
-                                    `<option value="${bs.id_bs}" ${selected}>${bs.id_bs}</option>`;
-                            });
-                        });
+                    fetchData(`${baseUrl}/api/responden/bloksensus/${desaId}`, idBs, 'id_bs').then(() => {
+                        idBs.dispatchEvent(new Event('change'));
+                    });
                 }
             });
 
-            // Load NKS based on Blok Sensus
             idBs.addEventListener('change', function() {
                 const bsId = this.value;
-                const currentNks = '{{ $responden->id_nks }}';
-
-                idNks.innerHTML = '<option value="">-- Pilih NKS --</option>';
-
+                resetCascades(idBs);
                 if (bsId) {
-                    fetch(`/responden/get-nks/${bsId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            data.forEach(nks => {
-                                const selected = nks.id_nks == currentNks ? 'selected' : '';
-                                idNks.innerHTML +=
-                                    `<option value="${nks.id_nks}" ${selected}>${nks.id_nks}</option>`;
-                            });
-                        });
+                    fetchData(`${baseUrl}/api/responden/nks/${bsId}`, idNks, 'id_nks').then(() => {
+                        idNks.dispatchEvent(new Event('change'));
+                    });
                 }
             });
 
-            // Load NURT based on NKS
             idNks.addEventListener('change', function() {
                 const nksId = this.value;
-                const currentNurt = '{{ $responden->id_nurt }}';
-
-                idNurt.innerHTML = '<option value="">-- Pilih NURT --</option>';
-
+                resetCascades(idNks);
                 if (nksId) {
-                    fetch(`/responden/get-nurt/${nksId}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            data.forEach(nurt => {
-                                const selected = nurt.id_nurt == currentNurt ? 'selected' : '';
-                                idNurt.innerHTML +=
-                                    `<option value="${nurt.id_nurt}" ${selected}>${nurt.id_nurt}</option>`;
-                            });
-                        });
+                    fetchData(`${baseUrl}/api/responden/nurt/${nksId}`, idNurt, 'id_nurt');
                 }
             });
+            
+            // --- LOGIC KUESIONER DINAMIS (CONDITIONAL LOGIC) ---
+            
+            function toggleQuestGroups(disableKeys) {
+                // 1. Reset semua Quest ke status normal (enabled)
+                allQuestGroups.forEach(group => {
+                    group.classList.remove('disabled-by-condition');
+                    group.querySelectorAll('.quest-input').forEach(input => {
+                        input.removeAttribute('disabled');
+                    });
+                });
+                
+                // 2. Terapkan disable pada Quest yang ditargetkan
+                disableKeys.forEach(keyToDisable => {
+                    const targetGroup = document.getElementById(`quest-${keyToDisable}`);
+                    if (targetGroup) {
+                        targetGroup.classList.add('disabled-by-condition');
+                        
+                        targetGroup.querySelectorAll('.quest-input').forEach(input => {
+                            input.setAttribute('disabled', 'disabled');
+                            // Opsional: hapus nilai input yang dinonaktifkan
+                            if (input.type === 'radio') {
+                                input.checked = false;
+                            } else if (input.tagName === 'SELECT') {
+                                input.value = '';
+                            } else { // Text / Textarea
+                                input.value = '';
+                            }
+                        });
+                    }
+                });
+            }
+
+            function evaluateConditionals() {
+                let keysToDisable = []; 
+                
+                allQuestGroups.forEach(group => {
+                    const conditionalTargetString = group.getAttribute('data-conditional-target');
+                    if (conditionalTargetString && conditionalTargetString !== '{}') {
+                        
+                        let currentAnswer = null;
+                        const questKey = group.getAttribute('data-quest-key');
+                        
+                        // Cari jawaban saat ini
+                        const radioChecked = group.querySelector('input[type="radio"]:checked');
+                        const selectValue = group.querySelector('select')?.value;
+                        
+                        if (radioChecked) {
+                            currentAnswer = radioChecked.value;
+                        } else if (selectValue && selectValue !== "") {
+                            currentAnswer = selectValue;
+                        }
+                        
+                        if (currentAnswer) {
+                            try {
+                                const logic = JSON.parse(conditionalTargetString);
+                                
+                                if (logic[currentAnswer]) {
+                                    keysToDisable = keysToDisable.concat(logic[currentAnswer]);
+                                }
+                            } catch (e) {
+                                // console.error(`Error parsing conditional target for ${questKey}:`, e);
+                            }
+                        }
+                    }
+                });
+                
+                keysToDisable = [...new Set(keysToDisable)]; 
+                toggleQuestGroups(keysToDisable);
+            }
+
+            // Bind event listener untuk Conditional Logic
+            questInputs.forEach(input => {
+                input.addEventListener('change', evaluateConditionals);
+            });
+            
+            // Jalankan sekali saat load untuk menerapkan kondisi awal
+            evaluateConditionals();
+
         });
     </script>
+    @endsection
 @endsection

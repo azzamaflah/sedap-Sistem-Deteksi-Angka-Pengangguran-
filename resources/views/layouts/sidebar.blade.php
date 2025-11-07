@@ -41,38 +41,37 @@
                 </a>
             </li>
             @auth
-                @if (Auth::user()->role === 'admin')
-                    <li class="menu-divider">
-                        <span class="menu-divider-text">Pengaturan</span>
-                    </li>
-                    <li class="menu-item {{ request()->routeIs('pengguna.*') ? 'active' : '' }}">
-                        <a href="{{ route('pengguna.index') }}" class="menu-link" title="Pengguna">
-                            <i class="bi bi-person-fill-gear menu-icon"></i>
-                            <span class="menu-text">Pengguna</span>
-                        </a>
-                    </li>
-                @endif
-            @endauth
+    @if (Auth::user()->role === 'admin')
+        <li class="menu-divider">
+            <span class="menu-divider-text">Admin Panel</span>
+        </li>
+        {{-- Pengguna Menu Item (Reference Style) --}}
+        <li class="menu-item {{ request()->routeIs('pengguna.*') ? 'active' : '' }}">
+            <a href="{{ route('pengguna.index') }}" class="menu-link" title="Pengguna">
+                <i class="bi bi-person-fill-gear menu-icon"></i>
+                <span class="menu-text">Pengguna</span>
+            </a>
+        </li>
 
-            @if (Auth::user()->isAdmin())
-                <div class="admin-menu">
-                    <h6 class="admin-menu-title">⚙️ ADMIN PANEL</h6>
-                    <ul class="admin-menu-list">
-                        <li class="admin-menu-item">
-                            <a href="{{ route('admin.config.quest') }}" class="admin-menu-link">
-                                <i class="bi bi-pen menu-icon"></i>
-                                <span>Kelola Quest</span>
-                            </a>
-                        </li>
-                        <li class="admin-menu-item">
-                            <a href="{{ route('admin.config.rumus') }}" class="admin-menu-link">
-                                <i class="bi bi-calculator menu-icon"></i>
-                                <span>Kelola Rumus Status</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            @endif
+        {{-- Kelola Quest Menu Item (Style Updated) --}}
+        <li class="menu-item {{ request()->routeIs('admin.config.quest') ? 'active' : '' }}">
+            <a href="{{ route('admin.config.quest') }}" class="menu-link" title="Kelola Quest">
+                <i class="bi bi-pen menu-icon"></i>
+                <span class="menu-text">Kelola Quest</span>
+            </a>
+        </li>
+
+        {{-- Kelola Rumus Status Menu Item (Style Updated) --}}
+        <li class="menu-item {{ request()->routeIs('admin.config.rumus') ? 'active' : '' }}">
+            <a href="{{ route('admin.config.rumus') }}" class="menu-link" title="Kelola Rumus Status">
+                <i class="bi bi-calculator menu-icon"></i>
+                <span class="menu-text">Kelola Rumus Status</span>
+            </a>
+        </li>
+
+    @endif
+@endauth
+
         </ul>
     </nav>
 
