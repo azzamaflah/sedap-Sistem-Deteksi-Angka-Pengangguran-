@@ -18,7 +18,8 @@ class WilayahTugas extends Model
         'id_desa',
         'id_bs',
         'id_nks',
-        'id_users', // Tambahkan kolom id_user untuk relasi ke pengawas
+        'id_user', 
+        'nama',
     ];
 
     // Relasi ke Kecamatan

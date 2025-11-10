@@ -54,7 +54,7 @@ class WilayahTugasController extends Controller
             'id_desa' => 'required|string|max:50',
             'id_bs' => 'required|string|max:50',
             'id_nks' => 'nullable|string|max:50',
-            'id_user' => 'required|exists:users,id',
+            'id_user' => 'nullable|exists:users,id',
         ]);
 
         WilayahTugas::create($validated);
@@ -80,12 +80,10 @@ class WilayahTugasController extends Controller
             'id_kec' => 'required|string|max:50',
             'id_desa' => 'required|string|max:50',
             'id_bs' => 'required|string|max:50',
-            'id_nks' => 'required|string|max:50',
-            'id_user' => 'nullable|exists:user,id_user',
+            'id_nks' => 'nullable|string|max:50',
+            'id_user' => 'nullable|exists:users,id',
         ]);
-
         $wilayahTugas->update($validated);
-
         return redirect()->route('wilayahTugas.index')
             ->with('success', 'Data wilayah tugas berhasil diupdate');
     }

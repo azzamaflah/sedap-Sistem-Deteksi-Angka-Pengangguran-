@@ -31,7 +31,7 @@
             transform: rotate(360deg) scale(1.1);
         }
 
-        
+
 
         .system-info-item {
             transition: all 0.3s ease;
@@ -65,18 +65,18 @@
         }
 
         /* .btn-custom::before {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 0;
-                height: 0;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.3);
-                transform: translate(-50%, -50%);
-                transition: width 0.6s, height 0.6s;
-                z-index: 0;
-            } */
+                        content: '';
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 0;
+                        height: 0;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.3);
+                        transform: translate(-50%, -50%);
+                        transition: width 0.6s, height 0.6s;
+                        z-index: 0;
+                    } */
 
         .btn-custom:hover::before {
             width: 300px;
@@ -444,7 +444,6 @@
 
         <div class="card-body p-0">
             <div class="table-responsive">
-                {{-- MENGHAPUS class table-striped --}}
                 <table class="table table-hover mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
@@ -457,12 +456,12 @@
                             <th class="text-center">ID BS</th>
                             <th class="text-center">ID NKS</th>
                             <th>Pengawas</th>
-                            <th class="text-center" style="width: 120px;">Aksi</th> {{-- Dikecilkan sedikit --}}
+                            <th class="text-center" style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($data as $row)
-                            <tr class="fade-in"> {{-- Tambahkan class fade-in di sini --}}
+                            <tr class="fade-in">
                                 <td class="text-center">
                                     <input type="checkbox" class="checkbox-item form-check-input"
                                         value="{{ $row->no }}">
@@ -480,32 +479,36 @@
                                 <td class="text-center">
                                     <span class="badge bg-info text-dark">{{ $row->id_nks ?? '-' }}</span>
                                 </td>
+
+                                {{-- ✅ KOLOM PENGAWAS - DIPERBAIKI --}}
                                 <td>
-                                    @if ($row->id_user && $row->pengawas)
+                                    @if ($row->pengawas)
+                                        {{-- ✅ Jika relasi pengawas berhasil di-load --}}
                                         <i class="bi bi-person-badge text-primary"></i>
                                         <strong>{{ $row->pengawas->name }}</strong>
                                         <br>
                                         <small class="text-muted">{{ $row->pengawas->email }}</small>
-                                    @elseif ($row->id_user && !$row->pengawas)
+                                    @elseif ($row->id_user)
+                                        {{-- ⚠️ Jika id_user ada tapi relasi gagal (data orphan) --}}
                                         <span class="text-warning">
                                             <i class="bi bi-exclamation-triangle"></i>
                                             User ID: {{ $row->id_user }} (Tidak ditemukan)
                                         </span>
                                     @else
+                                        {{-- ❌ Jika belum ada pengawas sama sekali --}}
                                         <span class="text-muted">
                                             <i class="bi bi-dash-circle"></i> Belum ditugaskan
                                         </span>
                                     @endif
                                 </td>
+
                                 <td class="text-center">
                                     <div class="btn-group btn-action-group" role="group">
-                                        {{-- MODIFIKASI: Ikon saja, btn-outline-primary --}}
                                         <a href="{{ route('wilayahTugas.edit', $row->no) }}"
                                             class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip"
                                             title="Edit Data">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        {{-- MODIFIKASI: Ikon saja, btn-outline-danger --}}
                                         <button type="button" class="btn btn-outline-danger btn-sm"
                                             data-bs-toggle="tooltip" title="Hapus Data"
                                             onclick="confirmDelete({{ $row->no }})">
@@ -515,7 +518,8 @@
                                     <form id="delete-form-{{ $row->no }}"
                                         action="{{ route('wilayahTugas.destroy', $row->no) }}" method="POST"
                                         style="display: none;">
-                                        @csrf @method('DELETE')
+                                        @csrf
+                                        @method('DELETE')
                                     </form>
                                 </td>
                             </tr>

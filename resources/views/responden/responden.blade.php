@@ -33,7 +33,8 @@
 
         /* Table Row Hover/Click Effect */
         .table-hover tbody tr:hover {
-            background-color: rgba(0, 123, 255, 0.05); /* Light primary color hover */
+            background-color: rgba(0, 123, 255, 0.05);
+            /* Light primary color hover */
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -41,7 +42,8 @@
         /* ===== STYLES KHUSUS RESPONDEN (DIKOMBINASIKAN & DIKONSISTENSIKAN) ===== */
         .btn-action-group {
             display: flex;
-            gap: 5px; /* Mengurangi gap untuk tombol ikon */
+            gap: 5px;
+            /* Mengurangi gap untuk tombol ikon */
             align-items: center;
         }
 
@@ -53,21 +55,22 @@
             transition: all 0.3s ease;
             border: none;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 1; /* Pastikan tombol memiliki stacking context */
+            z-index: 1;
+            /* Pastikan tombol memiliki stacking context */
         }
 
         /* .btn-custom::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        } */
+                            content: '';
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            width: 0;
+                            height: 0;
+                            border-radius: 50%;
+                            background: rgba(255, 255, 255, 0.3);
+                            transform: translate(-50%, -50%);
+                            transition: width 0.6s, height 0.6s;
+                        } */
 
         .btn-custom:hover::before {
             width: 300px;
@@ -144,7 +147,8 @@
             font-weight: bold;
             box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
             animation: pulse 2s infinite;
-            z-index: 100; /* Z-index sangat tinggi */
+            z-index: 100;
+            /* Z-index sangat tinggi */
         }
 
         @keyframes pulse {
@@ -326,7 +330,7 @@
         .search-wrapper .search-btn:hover i {
             transform: scale(1.2);
         }
-        
+
         /* Modifikasi Tombol Aksi */
         .btn-action-group .btn-action {
             padding: 0.25rem 0.5rem;
@@ -468,20 +472,26 @@
                                     <i class="fa fa-medium" aria-hidden="true"></i>{{ $row->nama_sample }}
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-{{ $row->status_badge_color }}">
-                                        {{ $row->status_pekerjaan }}
-                                    </span>
+                                    @if ($row->bekerja)
+                                        <span class="badge bg-success">Bekerja</span>
+                                    @elseif ($row->pengangguran)
+                                        <span class="badge bg-warning text-dark">Pengangguran</span>
+                                    @else
+                                        <span class="badge bg-dark">Tidak Terklasifikasi</span>
+                                    @endif
                                 </td>
                                 <td class="text-center">
                                     {{-- MODIFIKASI: Ikon saja, btn-outline-primary, lebih simple --}}
                                     <div class="btn-group btn-action-group" role="group">
-                                        <a href="{{ route('responden.edit', $row->no) }}" class="btn btn-outline-primary btn-sm"
-                                            data-bs-toggle="tooltip" title="Edit Data">
+                                        <a href="{{ route('responden.edit', $row->no) }}"
+                                            class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip"
+                                            title="Edit Data">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         {{-- MODIFIKASI: Ikon saja, btn-outline-danger, lebih simple --}}
-                                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip"
-                                            title="Hapus Data" onclick="confirmDelete({{ $row->no }})">
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                            data-bs-toggle="tooltip" title="Hapus Data"
+                                            onclick="confirmDelete({{ $row->no }})">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
@@ -663,8 +673,8 @@
                 threshold: 0.1
             });
 
-    
-            
+
+
             // Bootstrap Tooltip
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function(tooltipTriggerEl) {
