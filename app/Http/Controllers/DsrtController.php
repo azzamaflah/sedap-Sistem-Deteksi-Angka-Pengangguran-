@@ -11,6 +11,8 @@ use App\Exports\DsrtTemplateExport;
 use App\Imports\DsrtImport;
 use App\Exports\DsrtExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB; // <-- 1. TAMBAHKAN INI
+use Illuminate\Support\Facades\Log; // <-- Tambahkan ini untuk error handling
 
 class DsrtController extends Controller
 {
@@ -18,19 +20,66 @@ class DsrtController extends Controller
     {
         $query = Dsrt::with(['kecamatan', 'desa', 'wilayahTugas']);
 
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
+        // Ambil input filter
+        $search = $request->input('search');
+        $selectedYear = $request->input('year');
+        $selectedSemester = $request->input('semester');
+
+        // Filter: Pencarian
+        if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('id_kec', 'like', "%{$search}%")
                     ->orWhere('id_desa', 'like', "%{$search}%")
                     ->orWhere('id_bs', 'like', "%{$search}%")
                     ->orWhere('id_nks', 'like', "%{$search}%")
-                    ->orWhere('id_nurt', 'like', "%{$search}%");
+                    ->orWhere('id_nurt', 'like', "%{$search}%")
+                    ->orWhere('respon', 'like', "%{$search}%") // <-- Ditambahkan filter by respon
+                    ->orWhereHas('kecamatan', function ($q) use ($search) {
+                        $q->where('nama_kec', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('desa', function ($q) use ($search) {
+                        $q->where('nama_desa', 'like', "%{$search}%");
+                    });
             });
         }
 
-        $data = $query->paginate(20);
-        return view('dsrt.dsrt', compact('data'));
+        // ===== 2. LOGIKA FILTER SEMESTER BARU =====
+        if ($selectedYear) {
+            $query->whereYear('created_at', $selectedYear);
+        }
+
+        if ($selectedSemester) {
+            if ($selectedSemester == 1) {
+                // Semester 1: Januari - Juni
+                $query->whereMonth('created_at', '>=', 1)
+                      ->whereMonth('created_at', '<=', 6);
+            } elseif ($selectedSemester == 2) {
+                // Semester 2: Juli - Desember
+                $query->whereMonth('created_at', '>=', 7)
+                      ->whereMonth('created_at', '<=', 12);
+            }
+        }
+        // ==========================================
+
+        // 3. Ambil data tahun unik untuk dropdown filter
+        // PASTIKAN MENGAMBIL DARI TABEL 'dsrt'
+        $availableYears = DB::table('dsrt') 
+                            ->select(DB::raw('YEAR(created_at) as year'))
+                            ->whereNotNull('created_at')
+                            ->distinct()
+                            ->orderBy('year', 'desc')
+                            ->pluck('year');
+
+        // 4. Modifikasi paginasi untuk menyimpan parameter filter
+        $data = $query->paginate(20)->appends($request->except('page'));
+
+        // 5. Kirim data ke view
+        return view('dsrt.dsrt', compact(
+            'data',
+            'availableYears',
+            'selectedYear',
+            'selectedSemester'
+        ));
     }
 
     public function create()
@@ -59,6 +108,8 @@ class DsrtController extends Controller
     // AJAX: Get NKS by Blok Sensus
     public function getNksByBlokSensus($id_bs)
     {
+        // Perbaiki: Ambil NKS berdasarkan 'id_bs' DAN 'id_desa' (jika perlu)
+        // Untuk saat ini, asumsikan 'id_bs' cukup unik atau konteksnya sudah benar
         $nks = WilayahTugas::where('id_bs', $id_bs)
             ->whereNotNull('id_nks')
             ->select('id_nks')
@@ -75,7 +126,7 @@ class DsrtController extends Controller
             'id_bs' => 'required|string|max:50',
             'id_nks' => 'nullable|string|max:50',
             'id_nurt' => 'required|string|max:50',
-            'respon' => 'required|in:Respon,Non Respon', // Ganti jadi 'respon'
+            'respon' => 'required|in:Respon,Non Respon',
         ]);
 
         Dsrt::create($validated);
@@ -112,7 +163,7 @@ class DsrtController extends Controller
             'id_bs' => 'required|string|max:50',
             'id_nks' => 'nullable|string|max:50',
             'id_nurt' => 'required|string|max:50',
-            'respon' => 'required|in:Respon,Non Respon', // Ganti jadi 'respon'
+            'respon' => 'required|in:Respon,Non Respon',
         ]);
 
         $dsrt->update($validated);
@@ -129,6 +180,7 @@ class DsrtController extends Controller
         return redirect()->route('dsrt.index')
             ->with('success', 'Data Sampel Rumah Tangga berhasil dihapus');
     }
+    
     public function downloadTemplate()
     {
         return Excel::download(new DsrtTemplateExport, 'template_dsrt.xlsx');
@@ -142,21 +194,52 @@ class DsrtController extends Controller
         try {
             $importer = new DsrtImport();
             Excel::import($importer, $request->file('file'));
+            
             $ok = $importer->getImported();
             $skip = $importer->getSkipped();
             $err = $importer->getErrors();
+
             if ($ok > 0 && empty($err)) {
-                return back()->with('success', "Import berhasil: $ok data.");
+                return back()->with('success', "✅ Import berhasil: {$ok} data ditambahkan/diupdate.");
             }
-            if (!empty($err)) {
-                $msg = "Import {$ok} berhasil, {$skip} gagal.\n" . implode("\n", array_slice($err, 0, 5));
-                return back()->with('warning', $msg);
+            
+            if ($ok > 0 && !empty($err)) {
+                 $msg = "⚠️ Import selesai dengan catatan:\n\n";
+                 $msg .= "✅ Berhasil: {$ok} data\n";
+                 $msg .= "❌ Gagal/Dilewati: {$skip} data\n\n";
+                 $msg .= "Detail Error (maks 5):\n";
+                 $msg .= implode("\n", array_slice($err, 0, 5));
+                 return back()->with('warning', $msg);
             }
-            return back()->with('error', "Import gagal!\n" . implode("\n", $err));
+
+            if ($ok == 0 && !empty($err)) {
+                 $msg = "❌ Import gagal! Tidak ada data yang berhasil diimport.\n\n";
+                 $msg .= "Detail Error (maks 5):\n";
+                 $msg .= implode("\n", array_slice($err, 0, 5));
+                 return back()->with('error', $msg);
+            }
+
+             if ($ok == 0 && $skip > 0 && empty($err)) {
+                return back()->with('warning', "⚠️ Import selesai. {$skip} data dilewati (kemungkinan duplikat). Tidak ada data baru yang ditambahkan.");
+            }
+
+            return back()->with('success', 'Import selesai! Tidak ada data baru yang ditambahkan.');
+
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+             $failures = $e->failures();
+             $errorMessages = [];
+             foreach ($failures as $failure) {
+                 $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+             }
+             $message = "❌ Validasi Excel gagal!\n\n";
+             $message .= implode("\n", array_slice($errorMessages, 0, 10));
+             return back()->with('error', $message);
         } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+            Log::error('Import Exception: ' . $e->getMessage());
+            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
         }
     }
+    
     // Export dengan checkbox support
     public function export(Request $request)
     {

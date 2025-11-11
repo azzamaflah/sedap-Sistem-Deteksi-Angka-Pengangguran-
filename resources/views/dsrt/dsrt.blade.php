@@ -11,14 +11,11 @@
 @section('styles')
     <style>
         /* ===== STYLES DARI DASHBOARD.BLADE.PHP UNTUK KONSISTENSI VISUAL ===== */
-        /* Card Header Enhancement */
         .card-header {
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
             border-bottom: 2px solid #f0f0f0 !important;
         }
 
-
-        /* System Info Item (Digunakan untuk highlight baris) */
         .system-info-item {
             transition: all 0.3s ease;
             padding: 12px;
@@ -31,9 +28,8 @@
             transform: translateX(5px);
         }
 
-        /* Table Row Hover/Click Effect */
         .table-hover tbody tr:hover {
-            background-color: rgba(0, 123, 255, 0.05); /* Light primary color hover */
+            background-color: rgba(0, 123, 255, 0.05);
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -41,32 +37,19 @@
         /* ===== STYLES KHUSUS DSRT (DIKOMBINASIKAN) ===== */
         .btn-action-group {
             display: flex;
-            gap: 5px; /* Mengurangi gap untuk tombol ikon */
+            gap: 12px; /* Disesuaikan dari 5px ke 12px agar sama dgn WilayahTugas */
             align-items: center;
         }
 
         .btn-custom {
             position: relative;
-            /* Hapus overflow: hidden; untuk mencegah badge terpotong */
             font-weight: 600;
             letter-spacing: 0.3px;
             transition: all 0.3s ease;
             border: none;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 2;
         }
-
-        /* .btn-custom::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        } */
 
         .btn-custom:hover::before {
             width: 300px;
@@ -98,7 +81,7 @@
             background: linear-gradient(135deg, #28a745 0%, #218838 100%);
             color: white;
             position: relative;
-            z-index: 1; /* Pastikan tombol di bawah badge, tapi di atas elemen lain */
+            z-index: 1;
         }
 
         .btn-export:hover:not(:disabled) {
@@ -113,7 +96,7 @@
             opacity: 0.6;
         }
 
-        /* Add Button - Gradient Primary (Warna Biru Konsisten) */
+        /* Add Button - Gradient Primary */
         .btn-add {
             background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: white;
@@ -126,10 +109,9 @@
 
         /* Badge Counter untuk Export */
         .export-counter {
-            /* **PERBAIKAN Z-INDEX DAN POSISI AGAR TERLIHAT JELAS** */
             position: absolute;
-            top: -10px; /* Jarak lebih jauh dari atas */
-            right: -10px; /* Jarak lebih jauh dari kanan */
+            top: -10px;
+            right: -10px;
             background: #dc3545;
             color: white;
             border-radius: 50%;
@@ -142,19 +124,12 @@
             font-weight: bold;
             box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
             animation: pulse 2s infinite;
-            z-index: 99; /* Z-index sangat tinggi */
+            z-index: 99;
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         /* Icon Animation */
@@ -162,58 +137,25 @@
             transition: transform 0.3s ease;
             display: inline-block;
         }
-
-        .btn-custom:hover i {
-            transform: scale(1.2) rotate(5deg);
-        }
-
-        .btn-import:hover i {
-            animation: slideUp 0.5s ease;
-        }
-
-        .btn-export:hover:not(:disabled) i {
-            animation: slideDown 0.5s ease;
-        }
-
-        .btn-add:hover i {
-            animation: rotate360 0.6s ease;
-        }
+        .btn-custom:hover i { transform: scale(1.2) rotate(5deg); }
+        .btn-import:hover i { animation: slideUp 0.5s ease; }
+        .btn-export:hover:not(:disabled) i { animation: slideDown 0.5s ease; }
+        .btn-add:hover i { animation: rotate360 0.6s ease; }
 
         @keyframes slideUp {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-5px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
-
         @keyframes slideDown {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(5px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
         }
-
         @keyframes rotate360 {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        /* Search Bar Enhancement */
+        /* Search Bar & Filter Enhancement */
         .search-wrapper {
             position: relative;
             display: flex;
@@ -221,8 +163,8 @@
         }
 
         .search-wrapper .form-control {
-            padding-left: 25px;
-            padding-right: 90px;
+            padding-left: 45px;
+            padding-right: 50px;
             border-radius: 50px;
             border: 2px solid #e0e0e0;
             transition: all 0.3s ease;
@@ -234,6 +176,19 @@
             border-color: #007bff;
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
             outline: none;
+        }
+
+        /* Dropdown styling */
+        .form-filter-select {
+            border-radius: 50px !important;
+            height: 45px !important;
+            border: 2px solid #e0e0e0 !important;
+            transition: all 0.3s ease !important;
+        }
+        .form-filter-select:focus {
+            border-color: #007bff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15) !important;
+            outline: none !important;
         }
 
         .search-wrapper .search-icon {
@@ -254,21 +209,14 @@
         }
 
         @keyframes searchPulse {
-
-            0%,
-            100% {
-                transform: translateY(-50%) scale(1);
-            }
-
-            50% {
-                transform: translateY(-50%) scale(1.2);
-            }
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.2); }
         }
 
         /* Clear Button */
         .btn-clear-search {
             position: absolute;
-            right: 50px;
+            right: 15px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
@@ -289,15 +237,11 @@
             transform: translateY(-50%) scale(1.2) rotate(90deg);
         }
 
-        /* Search Submit Button */
-        .search-wrapper .search-btn {
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
+        /* Filter Submit Button (Hidden) */
+        .btn-filter-submit {
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
+            width: 45px;
+            height: 45px;
             padding: 0;
             display: flex;
             align-items: center;
@@ -308,24 +252,10 @@
             transition: all 0.3s ease;
             z-index: 10;
             box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+            flex-shrink: 0;
         }
 
-        .search-wrapper .search-btn:hover {
-            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
-            transform: translateY(-50%) scale(1.15);
-            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
-        }
-
-        .search-wrapper .search-btn i {
-            font-size: 16px;
-            transition: transform 0.3s ease;
-        }
-
-        .search-wrapper .search-btn:hover i {
-            transform: scale(1.2);
-        }
-        
-        /* Modifikasi Tombol Aksi */
+        /* Modifikasi Tombol Aksi Tabel */
         .btn-action-group .btn-action {
             padding: 0.25rem 0.5rem;
             font-size: 0.8rem;
@@ -334,7 +264,7 @@
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) { /* Ubah breakpoint ke lg */
             .btn-action-group {
                 flex-direction: column;
                 width: 100%;
@@ -343,13 +273,38 @@
             .btn-custom {
                 width: 100%;
             }
+        }
 
-            .search-wrapper .form-control {
-                padding-right: 50px;
+        @media (min-width: 992px) {
+
+            /* * State 1: SIDEBAR EXPANDED (Default / body:not(.toggle-sidebar)) 
+             * Kita perkecil padding dan font-size tombol
+             */
+            body:not(.toggle-sidebar) .btn-action-group .btn-custom {
+                padding: 0.4rem 0.8rem; /* Padding dikecilkan */
+                font-size: 0.8rem;      /* Font dikecilkan */
+                letter-spacing: 0.2px;
             }
 
-            .btn-clear-search {
-                display: none;
+            /* Perkecil juga ikonnya */
+            body:not(.toggle-sidebar) .btn-action-group .btn-custom i {
+                font-size: 0.9rem; /* Ukuran ikon dikecilkan */
+                margin-right: 0.3rem; /* Jarak ikon ke teks dikurangi */
+            }
+
+            /* * State 2: SIDEBAR COLLAPSED (body.toggle-sidebar)
+             * Kembalikan ke ukuran normal (pastikan nilai ini SAMA dengan style .btn-custom Anda)
+             */
+            body.toggle-sidebar .btn-action-group .btn-custom {
+                /* Sesuaikan nilai padding & font-size ini agar sama dgn style .btn-custom awal */
+                padding: 0.6rem 1.1rem; 
+                font-size: 0.9rem;      
+                letter-spacing: 0.3px;
+            }
+
+            body.toggle-sidebar .btn-action-group .btn-custom i {
+                font-size: 1rem; /* Ukuran ikon normal */
+                margin-right: 0.4rem; /* Jarak ikon ke teks normal */
             }
         }
     </style>
@@ -359,71 +314,112 @@
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show fade-in" role="alert">
             <i class="bi bi-check-circle-fill"></i> {!! nl2br(e(session('success'))) !!}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
         </div>
     @endif
     @if (session('warning'))
         <div class="alert alert-warning alert-dismissible fade show fade-in" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i>
             <pre class="mb-0" style="white-space: pre-wrap;">{!! e(session('warning')) !!}</pre>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
         </div>
     @endif
     @if (session('error'))
         <div class="alert alert-danger alert-dismissible fade show fade-in" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i>
             <pre class="mb-0" style="white-space: pre-wrap;">{!! e(session('error')) !!}</pre>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
         </div>
     @endif
 
     <div class="card shadow-sm fade-in">
         <div class="card-header bg-white py-3">
-            <div class="row align-items-center g-3">
-                <div class="col-lg-5 col-md-12">
-                    <form method="GET" class="search-wrapper">
-                        <input type="text" name="search" id="searchInput" class="form-control"
-                            placeholder="Cari kecamatan, desa, atau blok sensus..." value="{{ request('search') }}">
+            {{-- BUNGKUS SEMUA FILTER DALAM SATU FORM DENGAN ID --}}
+            <form method="GET" action="{{ route('dsrt.index') }}" id="filterForm">
+                <div class="row align-items-center g-3">
 
-                        @if (request('search'))
-                            <a href="{{ route('dsrt.index') }}" class="btn-clear-search" data-bs-toggle="tooltip"
-                                title="Hapus Pencarian">
-                                <i class="bi bi-x-circle-fill"></i>
-                            </a>
-                        @endif
+                    {{-- Kolom Filter: Search, Tahun, Semester --}}
+                    <div class="col-lg-7 col-md-12">
+                        <div class="d-flex flex-wrap flex-lg-nowrap gap-2">
+                            
+                            {{-- Search Bar --}}
+                            <div class="search-wrapper flex-grow-1" style="min-width: 250px;">
+                                <input type="text" name="search" id="searchInput" class="form-control"
+                                    placeholder="Cari kec, desa, nks, respon..."
+                                    value="{{ request('search') }}">
+                                <i class="bi bi-search search-icon"></i>
 
-                        <button type="submit" class="search-btn" data-bs-toggle="tooltip" title="Cari">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </form>
-                </div>
+                                {{-- Tombol Clear (muncul jika ada filter aktif) --}}
+                                @if (request('search') || request('year') || request('semester'))
+                                <a href="{{ route('dsrt.index') }}" class="btn-clear-search"
+                                    data-bs-toggle="tooltip" title="Hapus Filter">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </a>
+                                @endif
+                            </div>
 
-                <div class="col-lg-7 col-md-12">
-                    <div class="btn-action-group justify-content-lg-end">
-                        <button type="button" class="btn btn-custom btn-import" data-bs-toggle="modal"
-                            data-bs-target="#modalImport" data-bs-toggle="tooltip" title="Import data dari Excel">
-                            <i class="bi bi-file-earmark-arrow-up"></i> Import Excel
-                        </button>
+                            {{-- Filter Tahun --}}
+                            <div style="min-width: 150px;">
+                                <select name="year" class="form-select form-filter-select">
+                                    <option value="">Semua Tahun</option>
+                                    @isset($availableYears)
+                                        @foreach ($availableYears as $year)
+                                            <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
+                                                Tahun {{ $year }}
+                                            </option>
+                                        @endforeach
+                                    @endisset
+                                </select>
+                            </div>
 
-                        <button type="button" class="btn btn-custom btn-export" id="btnOpenExportModal" disabled
-                            data-bs-toggle="tooltip" title="Export data yang terpilih">
-                            <i class="bi bi-file-earmark-excel"></i> Export Terpilih
-                            <span class="export-counter d-none" id="exportCounter">0</span>
-                        </button>
+                            {{-- Filter Semester --}}
+                            <div style="min-width: 180px;">
+                                <select name="semester" class="form-select form-filter-select">
+                                    <option value="">Semua Semester</option>
+                                    <option value="1" {{ $selectedSemester == 1 ? 'selected' : '' }}>
+                                        Semester 1 (Jan-Jun)
+                                    </option>
+                                    <option value="2" {{ $selectedSemester == 2 ? 'selected' : '' }}>
+                                        Semester 2 (Jul-Des)
+                                    </option>
+                                </select>
+                            </div>
 
-                        <a href="{{ route('dsrt.create') }}" class="btn btn-custom btn-add" data-bs-toggle="tooltip"
-                            title="Tambah data baru">
-                            <i class="bi bi-plus-circle"></i> Tambah Sampel
-                        </a>
+                            {{-- Tombol Submit Filter (Dihidden, auto-submit via JS) --}}
+                            <button type="submit" class="btn-filter-submit d-none" data-bs-toggle="tooltip" title="Terapkan Filter">
+                                <i class="bi bi-funnel-fill"></i>
+                            </button>
+                        </div>
                     </div>
+
+                    {{-- Kolom Tombol Aksi --}}
+                    <div class="col-lg-5 col-md-12">
+                        <div class="btn-action-group justify-content-lg-end">
+                            <button type="button" class="btn btn-custom btn-import" data-bs-toggle="modal"
+                                data-bs-target="#modalImport" data-bs-toggle="tooltip" title="Import data dari Excel">
+                                <i class="bi bi-file-earmark-arrow-up"></i> Import Excel
+                            </button>
+
+                            <button type="button" class="btn btn-custom btn-export" id="btnOpenExportModal" disabled
+                                data-bs-toggle="tooltip" title="Export data yang terpilih">
+                                <i class="bi bi-file-earmark-excel"></i> Export Terpilih
+                                <span class="export-counter d-none" id="exportCounter">0</span>
+                            </button>
+
+                            <a href="{{ route('dsrt.create') }}" class="btn btn-custom btn-add" data-bs-toggle="tooltip"
+                                title="Tambah data baru">
+                                <i class="bi bi-plus-circle"></i> Tambah Sampel
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
+            </form> {{-- TUTUP FORM --}}
         </div>
 
         <div class="card-body p-0">
             <div class="table-responsive">
-                {{-- PERUBAHAN: Menghilangkan class table-striped --}}
-                <table class="table table-hover mb-0 align-middle"> 
+                <table class="table table-hover mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
                             <th class="text-center" style="width: 40px;">
@@ -436,12 +432,13 @@
                             <th class="text-center">ID NKS</th>
                             <th class="text-center">No Urut RT</th>
                             <th class="text-center">Hasil Pencacahan</th>
-                            <th class="text-center" style="width: 120px;">Aksi</th> {{-- Dikecilkan --}}
+                            <th>Tgl Dibuat</th> {{-- <-- KOLOM BARU --}}
+                            <th class="text-center" style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($data as $row)
-                            <tr class="fade-in"> {{-- Tambahkan class fade-in --}}
+                            <tr class="fade-in">
                                 <td class="text-center">
                                     <input type="checkbox" class="checkbox-item form-check-input"
                                         value="{{ $row->no }}">
@@ -471,16 +468,20 @@
                                         </span>
                                     @endif
                                 </td>
+                                {{-- KOLOM BARU UNTUK TANGGAL --}}
+                                <td>
+                                    <small class="text-muted">{{ $row->created_at ? $row->created_at->format('d/m/Y') : '-' }}</small>
+                                </td>
                                 <td class="text-center">
-                                    {{-- MODIFIKASI: Ikon saja, btn-outline-primary, lebih simple --}}
                                     <div class="btn-group btn-action-group" role="group">
-                                        <a href="{{ route('dsrt.edit', $row->no) }}" class="btn btn-outline-primary btn-sm"
-                                            data-bs-toggle="tooltip" title="Edit Data">
+                                        <a href="{{ route('dsrt.edit', $row->no) }}"
+                                            class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip"
+                                            title="Edit Data">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        {{-- MODIFIKASI: Ikon saja, btn-outline-danger, lebih simple --}}
-                                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip"
-                                            title="Hapus Data" onclick="confirmDelete({{ $row->no }})">
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                            data-bs-toggle="tooltip" title="Hapus Data"
+                                            onclick="confirmDelete({{ $row->no }})">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
@@ -493,12 +494,21 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center py-5 fade-in" style="animation-delay: 0.1s;">
+                                {{-- UPDATE COLSPAN MENJADI 10 --}}
+                                <td colspan="10" class="text-center py-5 fade-in" style="animation-delay: 0.1s;">
                                     <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
-                                    <p class="text-muted mt-2">Tidak ada data sampel rumah tangga.</p>
-                                    <a href="{{ route('dsrt.create') }}" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-plus-circle"></i> Tambah Data Pertama
-                                    </a>
+                                    
+                                    @if(request('search') || request('year') || request('semester'))
+                                        <p class="text-muted mt-2">Tidak ada data yang cocok dengan filter Anda.</p>
+                                        <a href="{{ route('dsrt.index') }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-arrow-clockwise"></i> Reset Filter
+                                        </a>
+                                    @else
+                                        <p class="text-muted mt-2">Tidak ada data sampel rumah tangga.</p>
+                                        <a href="{{ route('dsrt.create') }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-plus-circle"></i> Tambah Data Pertama
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse
@@ -509,9 +519,10 @@
         <div class="card-footer bg-white fade-in" style="animation-delay: 0.2s;">
             {{ $data->links('pagination::bootstrap-5') }}
         </div>
-        
+
     </div>
 
+    {{-- MODAL EXPORT (TIDAK BERUBAH) --}}
     <div class="modal fade" id="modalExport" tabindex="-1" aria-labelledby="modalExportLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form id="export-form" method="POST" action="{{ route('dsrt.export') }}">
@@ -521,7 +532,7 @@
                         <h5 class="modal-title" id="modalExportLabel">
                             <i class="bi bi-file-earmark-excel"></i> Export Data Terpilih
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
@@ -555,6 +566,7 @@
         </div>
     </div>
 
+    {{-- MODAL IMPORT (TIDAK BERUBAH) --}}
     <div class="modal fade" id="modalImport" tabindex="-1" aria-labelledby="modalImportLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -562,7 +574,7 @@
                     <h5 class="modal-title" id="modalImportLabel">
                         <i class="bi bi-file-earmark-arrow-up"></i> Import Data Sampel Rumah Tangga
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <form action="{{ route('dsrt.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -654,7 +666,7 @@
             }, {
                 threshold: 0.1
             });
-
+            
             
             // Bootstrap Tooltip
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -742,6 +754,24 @@
                     modal.show();
                 });
             }
+
+            // ===== SCRIPT BARU UNTUK AUTO-SUBMIT FILTER DROPDOWN =====
+            const filterForm = document.getElementById('filterForm');
+            const yearSelect = document.querySelector('select[name="year"]');
+            const semesterSelect = document.querySelector('select[name="semester"]');
+
+            function submitForm() {
+                filterForm.submit();
+            }
+
+            // Submit form secara otomatis HANYA JIKA dropdown tahun/semester diubah
+            if (yearSelect) {
+                yearSelect.addEventListener('change', submitForm);
+            }
+            if (semesterSelect) {
+                semesterSelect.addEventListener('change', submitForm);
+            }
+            // =========================================================
         });
     </script>
 @endsection

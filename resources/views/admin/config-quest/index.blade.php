@@ -339,15 +339,7 @@
         }, {
             threshold: 0.1
         });
-        
-        // NEW: Ambil semua elemen fade-in dan amati
-        document.querySelectorAll('.fade-in').forEach(element => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(10px)';
-            element.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-            observer.observe(element);
-        });
-
+         
         // ===================================
         // NEW: Bootstrap Tooltip
         // ===================================

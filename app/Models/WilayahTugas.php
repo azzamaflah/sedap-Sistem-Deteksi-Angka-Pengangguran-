@@ -11,14 +11,14 @@ class WilayahTugas extends Model
 
     protected $table = 'bloksensus';
     protected $primaryKey = 'no';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'id_kec',
         'id_desa',
         'id_bs',
         'id_nks',
-        'id_user', 
+        'id_user',
         'nama',
     ];
 

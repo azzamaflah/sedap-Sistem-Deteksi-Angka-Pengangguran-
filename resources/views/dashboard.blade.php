@@ -8,6 +8,7 @@
 @endsection
 
 @section('styles')
+    {{-- (STYLE ASLI ANDA) --}}
     <style>
         /* ===== WELCOME CARD GRADIENT ===== */
         .welcome-gradient {
@@ -344,10 +345,25 @@
         .stats-card:nth-child(4) {
             animation-delay: 0.4s;
         }
+
+        /* ===== CSS BARU UNTUK FILTER ===== */
+        .form-filter-select {
+            border-radius: 50px !important;
+            height: 45px !important;
+            border: 2px solid #e0e0e0 !important;
+            transition: all 0.3s ease !important;
+            font-weight: 500;
+        }
+        .form-filter-select:focus {
+            border-color: #007bff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15) !important;
+            outline: none !important;
+        }
     </style>
 @endsection
 
 @section('content')
+    {{-- ====== WELCOME CARD ====== --}}
     <div class="row g-2 mb-2 fade-in">
         <div class="col-12">
             <div class="card border-0 shadow-sm welcome-gradient overflow-hidden">
@@ -387,8 +403,56 @@
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
+    {{-- ====== BARIS FILTER BARU ====== --}}
+    <div class="row g-3 mb-3 fade-in" style="animation-delay: 0.05s;">
+        <div class="col-12">
+            <form id="filterForm" method="GET" action="{{ route('dashboard') }}">
+                <div class="row g-2 align-items-center">
+                    <div class="col-auto">
+                        <label class="form-label fw-bold mb-0">
+                            <i class="bi bi-funnel-fill"></i> Tampilkan Data:
+                        </label>
+                    </div>
+                    {{-- Dropdown Tahun --}}
+                    <div class="col-12 col-sm-auto col-md-3 col-lg-2">
+                        <select name="year" class="form-select form-filter-select">
+                            {{-- Tampilkan tahun yang tersedia --}}
+                            @forelse($availableYears as $year)
+                                <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
+                                    Tahun {{ $year }}
+                                </option>
+                            @empty
+                                {{-- Fallback jika tidak ada data sama sekali --}}
+                                <option value="{{ date('Y') }}" selected>Tahun {{ date('Y') }}</option>
+                            @endforelse
+                        </select>
+                    </div>
+                    {{-- Dropdown Semester --}}
+                    <div class="col-12 col-sm-auto col-md-3 col-lg-2">
+                        <select name="semester" class="form-select form-filter-select">
+                            <option value="">Semua Semester</option>
+                            <option value="1" {{ $selectedSemester == 1 ? 'selected' : '' }}>Semester 1 (Jan-Jun)</option>
+                            <option value="2" {{ $selectedSemester == 2 ? 'selected' : '' }}>Semester 2 (Jul-Des)</option>
+                        </select>
+                    </div>
+                    {{-- Tombol Reset (Hanya muncul jika ada filter non-default) --}}
+                    @if(request('year') || request('semester'))
+                    <div class="col-auto">
+                         <a href="{{ route('dashboard') }}" class="btn btn-outline-danger" 
+                            style="border-radius: 50px; height: 45px; width: 45px; display: flex; align-items: center; justify-content: center;" 
+                            data-bs-toggle="tooltip" title="Reset Filter">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    </div>
+                    @endif
+                </div>
+            </form>
+        </div>
+    </div>
 
+
+    {{-- ====== STATS CARD ROW (Data sudah difilter di Controller) ====== --}}
+    <div class="row g-3 mb-4">
         {{-- Card 1: Wilayah Tugas --}}
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm h-100 stats-card fade-in"
@@ -410,7 +474,7 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between pt-3 border-top">
                         <small class="text-muted" style="font-size: 0.8rem;">
-                            <i class="bi bi-clock-history"></i> Update terbaru
+                            <i class="bi bi-pin-map"></i> Total Blok Sensus
                         </small>
                         <a href="{{ route('wilayahTugas.index') }}"
                             class="text-decoration-none text-primary fw-semibold small detail-link"
@@ -443,7 +507,7 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between pt-3 border-top">
                         <small class="text-muted" style="font-size: 0.8rem;">
-                            <i class="bi bi-graph-up"></i> Total sampel
+                            <i class="bi bi-house-door"></i> Total Rumah Tangga
                         </small>
                         <a href="{{ route('dsrt.index') }}"
                             class="text-decoration-none text-success fw-semibold small detail-link"
@@ -476,7 +540,7 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between pt-3 border-top">
                         <small class="text-muted" style="font-size: 0.8rem;">
-                            <i class="bi bi-person-check"></i> Data terkumpul
+                            <i class="bi bi-person-check"></i> Data Terkumpul
                         </small>
                         <a href="{{ route('responden.index') }}"
                             class="text-decoration-none text-warning fw-semibold small detail-link"
@@ -488,6 +552,7 @@
             </div>
         </div>
 
+        {{-- Card 4: Aksi Cepat (DIKEMBALIKAN SESUAI PERMINTAAN) --}}
         <div class="col-xl-3 col-md-6">
             <div class="card border-0 shadow-sm h-100 stats-card fade-in">
                 <div class="card-body p-4">
@@ -502,11 +567,10 @@
 
                     {{-- Bagian 2: Tombol Aksi (Body Konten Utama) --}}
                     <div class="row g-2 text-center mb-3">
-
                         {{-- Tombol 1: Tambah Wilayah (col-4) --}}
                         <div class="col-4">
                             <a href="{{ route('wilayahTugas.create') }}"
-                                class="btn btn-outline-primary btn-sm quick-action-btn w-100 p-2" 
+                                class="btn btn-outline-primary btn-sm quick-action-btn w-100 p-2"
                                 title="Tambah Wilayah">
                                 <i class="bi bi-geo-alt-fill d-block mb-1" style="font-size: 1.1rem;"></i>
                                 <span style="font-size: 0.65rem; font-weight: 600;">Wilayah</span>
@@ -535,92 +599,376 @@
                     </div>
 
                     <small class="text-muted" style="font-size: 0.8rem;">
-                            <i class="bi bi-plus-circle"></i> tambah data
-                        </small>
+
+                        <i class="bi bi-plus-circle"></i> tambah data
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {{-- ====== CHART ROW 1 ====== --}}
+    <div class="row g-3 mb-4">
+        {{-- GRAFIK 1: Status Ketenagakerjaan (Pie) --}}
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100 fade-in" style="animation-delay: 0.5s;">
+                <div class="card-header">
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i class="bi bi-pie-chart-fill me-2 text-primary"></i>Status Ketenagakerjaan
+                    </h5>
+                    {{-- GANTI TAHUN DENGAN FILTER DISPLAY --}}
+                    <small class="text-muted">Proporsi Bekerja vs Pengangguran ({{ $filterDisplay }})</small>
+                </div>
+                <div class="card-body p-3 d-flex align-items-center justify-content-center">
+                    <div style="min-height: 350px; width: 100%;">
+                        <canvas id="statusPekerjaanChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-    @endsection
 
-    @section('scripts')
-        <script>
-            // Fungsi untuk memperbarui jam secara real-time
-            function updateClock() {
-                const clockElement = document.getElementById('realtime-clock');
-                const dateElement = document.getElementById('realtime-date');
+        {{-- GRAFIK 4: Sebaran Pengangguran (Bar) --}}
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100 fade-in" style="animation-delay: 0.6s;">
+                <div class="card-header">
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i class="bi bi-bar-chart-line-fill me-2 text-danger"></i>Sebaran Pengangguran per Kecamatan
+                    </h5>
+                    {{-- GANTI TAHUN DENGAN FILTER DISPLAY --}}
+                    <small class="text-muted">Jumlah Responden Pengangguran di Tiap Wilayah ({{ $filterDisplay }})</small>
+                </div>
+                <div class="card-body p-3">
+                    <div style="min-height: 350px; width: 100%;">
+                        <canvas id="sebaranPengangguranChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                if (clockElement) {
-                    // Gunakan waktu lokal browser untuk real-time, ini akan lebih akurat di sisi klien
-                    const now = new Date();
+    {{-- ====== CHART ROW 2 ====== --}}
+    <div class="row g-3 mb-4">
+        {{-- GRAFIK 3: Progress Entri Responden by Pengawas (Bar) --}}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100 fade-in" style="animation-delay: 0.7s;">
+                <div class="card-header">
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i class="bi bi-person-check-fill me-2 text-success"></i>Top 10 Progress Pengawas
+                    </h5>
+                    {{-- GANTI TAHUN DENGAN FILTER DISPLAY --}}
+                    <small class="text-muted">Jumlah Entri Responden per Pengawas ({{ $filterDisplay }})</small>
+                </div>
+                <div class="card-body p-3">
+                    <div style="min-height: 350px; width: 100%;">
+                        <canvas id="progressPengawasChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    // Opsi untuk format jam 24 jam (HH:MM:SS)
-                    const timeOptions = {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false
-                    };
+        {{-- GRAFIK 2: Progress Entri DSRT by NKS (Bar) --}}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100 fade-in" style="animation-delay: 0.8s;">
+                <div class="card-header">
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i class="bi bi-bar-chart-steps me-2 text-info"></i>Top 10 Progress DSRT per NKS
+                    </h5>
+                    {{-- GANTI TAHUN DENGAN FILTER DISPLAY --}}
+                    <small class="text-muted">Jumlah Entri Rumah Tangga per NKS ({{ $filterDisplay }})</small>
+                </div>
+                <div class="card-body p-3">
+                    <div style="min-height: 350px; width: 100%;">
+                        <canvas id="progressNKSChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
 
-                    // Opsi untuk format tanggal (dddd, D MMMM Y) - menyesuaikan dengan PHP isoFormat
-                    const dateOptions = {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    };
+@section('scripts')
+    {{-- Script Asli Anda (Jam, Animasi, dll) --}}
+    <script>
+        // Fungsi untuk memperbarui jam secara real-time
+        function updateClock() {
+            const clockElement = document.getElementById('realtime-clock');
+            const dateElement = document.getElementById('realtime-date');
 
-                    // Format waktu ke H:i:s dan tanggal ke dddd, D MMMM Y (menggunakan locale ID untuk bahasa Indonesia)
-                    const timeString = now.toLocaleTimeString('id-ID', timeOptions);
-                    const dateString = now.toLocaleDateString('id-ID', dateOptions);
-
-                    // Update jam
-                    clockElement.textContent = timeString;
-
-                    // Update tanggal (hanya perbarui jika tanggal berubah)
-                    if (dateElement && dateElement.textContent !== dateString) {
-                        dateElement.textContent = dateString;
-                    }
+            if (clockElement) {
+                const now = new Date();
+                const timeOptions = {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                };
+                const dateOptions = {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                };
+                const timeString = now.toLocaleTimeString('id-ID', timeOptions);
+                const dateString = now.toLocaleDateString('id-ID', dateOptions);
+                clockElement.textContent = timeString;
+                if (dateElement && dateElement.textContent !== dateString) {
+                    dateElement.textContent = dateString;
                 }
             }
+        }
 
-            document.addEventListener('DOMContentLoaded', function() {
-                // >>> Real-time Clock Initialization <<<
-                updateClock();
-                // Perbarui jam setiap 1 detik
-                setInterval(updateClock, 1000);
+        document.addEventListener('DOMContentLoaded', function() {
+            // >>> Real-time Clock Initialization <<<
+            updateClock();
+            setInterval(updateClock, 1000);
 
-                // Smooth scroll reveal animation
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.style.opacity = '1';
-                            entry.target.style.transform = 'translateY(0)';
-                            observer.unobserve(entry.target); // Stop observing once visible
-                        }
-                    });
-                }, {
-                    threshold: 0.1
-                });
+            // Bootstrap Tooltip
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
 
-
-                // Stats cards click handler
-                const statsCards = document.querySelectorAll('.stats-card');
-                statsCards.forEach(card => {
-                    card.addEventListener('click', function(e) {
+            // Stats cards click handler
+            const statsCards = document.querySelectorAll('.stats-card');
+            statsCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Hanya redirect jika card *tidak* berisi tombol aksi cepat
+                    if (!this.querySelector('.quick-action-btn')) {
                         const link = this.querySelector('a[href]');
                         if (link && !e.target.closest('a')) {
-                            window.location.href = link.getAttribute('href');
+                            // Cek jika rute ada sebelum redirect
+                            if (link.getAttribute('href') && link.getAttribute('href') !== '#') {
+                                window.location.href = link.getAttribute('href');
+                            }
                         }
-                    });
-                });
-
-                // Prevent double click on detail links
-                document.querySelectorAll('.detail-link').forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                    });
+                    }
                 });
             });
-        </script>
-    @endsection
+
+            // Prevent double click on detail links
+            document.querySelectorAll('.detail-link, .quick-action-btn').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Mencegah card di-klik saat tombol di-klik
+                });
+            });
+
+             // ===== SCRIPT BARU UNTUK AUTO-SUBMIT FILTER DROPDOWN =====
+            const filterForm = document.getElementById('filterForm');
+            const yearSelect = document.querySelector('select[name="year"]');
+            const semesterSelect = document.querySelector('select[name="semester"]');
+    
+            function submitForm() {
+                // Tampilkan overlay loading sederhana
+                let overlay = document.createElement('div');
+                overlay.style = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 9998; display: flex; align-items: center; justify-content: center;';
+                overlay.innerHTML = '<div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"><span class="visually-hidden">Loading...</span></div>';
+                document.body.appendChild(overlay);
+                
+                filterForm.submit();
+            }
+    
+            if (yearSelect) {
+                yearSelect.addEventListener('change', submitForm);
+            }
+            if (semesterSelect) {
+                semesterSelect.addEventListener('change', submitForm);
+            }
+            // =========================================================
+        });
+    </script>
+
+    {{-- Chart.js --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {{-- Script Chart (Diambil dari kode asli Anda) --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Helper function untuk menampilkan pesan jika data kosong
+            const showEmptyChartMessage = (canvasId, message) => {
+                const canvas = document.getElementById(canvasId);
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Hapus chart lama jika ada
+                    canvas.style.display = 'none'; // Sembunyikan canvas
+                    
+                    const parent = canvas.parentElement;
+                    if(parent) {
+                        let msgDiv = parent.querySelector('.empty-chart-msg');
+                        if (!msgDiv) {
+                            msgDiv = document.createElement('div');
+                            msgDiv.className = 'empty-chart-msg alert alert-warning text-center d-flex align-items-center justify-content-center';
+                            msgDiv.style.minHeight = '350px';
+                            parent.appendChild(msgDiv);
+                        }
+                        msgDiv.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i> ${message}`;
+                    }
+                }
+            };
+
+            // Ambil data dari Controller
+            try { 
+                const chartStatusPekerjaan = {!! json_encode($chartStatusPekerjaan) !!};
+                const chartNKS = {!! json_encode($chartNKS) !!};
+                const chartPengawas = {!! json_encode($chartPengawas) !!};
+                const chartSebaran = {!! json_encode($chartSebaranPengangguran) !!};
+                const filterDisplay = '{{ $filterDisplay }}'; // Judul filter
+
+                // ===== 1. Chart Status Ketenagakerjaan (Doughnut) =====
+                const ctxStatus = document.getElementById('statusPekerjaanChart');
+                if (ctxStatus && chartStatusPekerjaan.data && chartStatusPekerjaan.data.some(d => d > 0)) {
+                    new Chart(ctxStatus.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: chartStatusPekerjaan.labels,
+                            datasets: [{
+                                data: chartStatusPekerjaan.data,
+                                backgroundColor: chartStatusPekerjaan.colors,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                },
+                                title: {
+                                    display: false,
+                                }
+                            }
+                        }
+                    });
+                } else if(ctxStatus) {
+                    showEmptyChartMessage('statusPekerjaanChart', `Data Status Ketenagakerjaan (${filterDisplay}) belum tersedia.`);
+                }
+
+                // ===== 2. Chart Sebaran Pengangguran (Horizontal Bar) =====
+                const ctxSebaran = document.getElementById('sebaranPengangguranChart');
+                if (ctxSebaran && chartSebaran.data && chartSebaran.data.length > 0) {
+                    new Chart(ctxSebaran.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: chartSebaran.labels,
+                            datasets: [{
+                                label: 'Jumlah Pengangguran',
+                                data: chartSebaran.data,
+                                backgroundColor: '#dc3545', // Warna merah untuk pengangguran
+                                borderColor: '#dc3545',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y', // Membuat bar menjadi horizontal
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false 
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else if(ctxSebaran) {
+                     showEmptyChartMessage('sebaranPengangguranChart', `Data Sebaran Pengangguran (${filterDisplay}) belum tersedia.`);
+                }
+
+                // ===== 3. Chart Progress Pengawas (Horizontal Bar) =====
+                const ctxPengawas = document.getElementById('progressPengawasChart');
+                if (ctxPengawas && chartPengawas.data && chartPengawas.data.length > 0) {
+                    new Chart(ctxPengawas.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: chartPengawas.labels,
+                            datasets: [{
+                                label: 'Total Responden',
+                                data: chartPengawas.data,
+                                backgroundColor: chartPengawas.backgroundColor,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y', // Bar horizontal
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else if(ctxPengawas) {
+                    showEmptyChartMessage('progressPengawasChart', `Data Progress Pengawas (${filterDisplay}) belum tersedia.`);
+                }
+
+                // ===== 4. Chart Progress NKS (Vertical Bar) =====
+                const ctxNKS = document.getElementById('progressNKSChart');
+                if (ctxNKS && chartNKS.data && chartNKS.data.length > 0) {
+                    new Chart(ctxNKS.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: chartNKS.labels,
+                            datasets: [{
+                                label: 'Total Rumah Tangga',
+                                data: chartNKS.data,
+                                backgroundColor: chartNKS.backgroundColor,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'x', // Bar vertikal
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else if(ctxNKS) {
+                    showEmptyChartMessage('progressNKSChart', `Data Progress NKS (${filterDisplay}) belum tersedia.`);
+                }
+
+            } catch (e) {
+                console.error("Gagal memuat data chart:", e);
+                // Tampilkan pesan error jika JSON atau rendering gagal
+                showEmptyChartMessage('statusPekerjaanChart', 'Gagal memuat chart.');
+                showEmptyChartMessage('sebaranPengangguranChart', 'Gagal memuat chart.');
+                showEmptyChartMessage('progressPengawasChart', 'Gagal memuat chart.');
+                showEmptyChartMessage('progressNKSChart', 'Gagal memuat chart.');
+            }
+        });
+    </script>
+@endsection

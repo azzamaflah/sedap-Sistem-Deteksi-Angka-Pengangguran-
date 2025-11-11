@@ -11,7 +11,7 @@ class Dsrt extends Model
 
     protected $table = 'dsrt';
     protected $primaryKey = 'no';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'id_kec',

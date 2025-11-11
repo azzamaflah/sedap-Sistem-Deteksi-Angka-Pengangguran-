@@ -11,27 +11,80 @@ use App\Imports\WilayahTugasImport;
 use App\Exports\WilayahTugasTemplateExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\WilayahTugasExport;
-
+use Illuminate\Support\Facades\DB; // <-- 1. TAMBAHKAN INI
+use Illuminate\Support\Facades\Log; // <-- Tambahkan ini untuk error handling
 
 class WilayahTugasController extends Controller
 {
+    /**
+     * Tampilkan daftar wilayah tugas dengan filter.
+     */
     public function index(Request $request)
     {
         $query = WilayahTugas::with(['kecamatan', 'desa', 'pengawas']);
 
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
+        // Ambil input filter
+        $search = $request->input('search');
+        $selectedYear = $request->input('year');
+        $selectedSemester = $request->input('semester');
+
+        // Filter: Pencarian
+        if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('id_kec', 'like', "%{$search}%")
                     ->orWhere('id_desa', 'like', "%{$search}%")
                     ->orWhere('id_bs', 'like', "%{$search}%")
                     ->orWhere('id_nks', 'like', "%{$search}%")
-                    ->orWhere('nama', 'like', "%{$search}%");
+                    ->orWhere('nama', 'like', "%{$search}%")
+                    ->orWhereHas('kecamatan', function ($q) use ($search) {
+                        $q->where('nama_kec', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('desa', function ($q) use ($search) {
+                        $q->where('nama_desa', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('pengawas', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
-        $data = $query->paginate(20);
-        return view('wilayahTugas.wilayahTugas', compact('data'));
+        // ===== 2. LOGIKA FILTER SEMESTER BARU =====
+        if ($selectedYear) {
+            $query->whereYear('created_at', $selectedYear);
+        }
+
+        if ($selectedSemester) {
+            if ($selectedSemester == 1) {
+                // Semester 1: Januari - Juni
+                $query->whereMonth('created_at', '>=', 1)
+                      ->whereMonth('created_at', '<=', 6);
+            } elseif ($selectedSemester == 2) {
+                // Semester 2: Juli - Desember
+                $query->whereMonth('created_at', '>=', 7)
+                      ->whereMonth('created_at', '<=', 12);
+            }
+        }
+        // ==========================================
+
+        // 3. Ambil data tahun unik untuk dropdown filter
+        // Menggunakan 'bloksensus' sesuai nama tabel di SQL
+        $availableYears = DB::table('bloksensus') 
+                            ->select(DB::raw('YEAR(created_at) as year'))
+                            ->whereNotNull('created_at')
+                            ->distinct()
+                            ->orderBy('year', 'desc')
+                            ->pluck('year');
+
+        // 4. Modifikasi paginasi untuk menyimpan parameter filter
+        $data = $query->paginate(20)->appends($request->except('page'));
+
+        // 5. Kirim data ke view
+        return view('wilayahTugas.wilayahTugas', compact(
+            'data',
+            'availableYears',  // <-- Kirim tahun ke view
+            'selectedYear',    // <-- Kirim filter aktif
+            'selectedSemester' // <-- Kirim filter aktif
+        ));
     }
 
     public function create()
@@ -56,6 +109,13 @@ class WilayahTugasController extends Controller
             'id_nks' => 'nullable|string|max:50',
             'id_user' => 'nullable|exists:users,id',
         ]);
+
+        if ($request->filled('id_user')) {
+            $user = User::find($request->id_user);
+            if ($user) {
+                $validated['nama'] = $user->name; // Ambil nama dari tabel users
+            }
+        }
 
         WilayahTugas::create($validated);
 
@@ -83,6 +143,18 @@ class WilayahTugasController extends Controller
             'id_nks' => 'nullable|string|max:50',
             'id_user' => 'nullable|exists:users,id',
         ]);
+
+        if ($request->filled('id_user')) {
+            $user = User::find($request->id_user);
+            if ($user) {
+                $validated['nama'] = $user->name; // Ambil nama dari tabel users
+            }
+        } else {
+             // Jika id_user dikosongkan, hapus juga nama pengawas
+            $validated['nama'] = null;
+            $validated['id_user'] = null;
+        }
+        
         $wilayahTugas->update($validated);
         return redirect()->route('wilayahTugas.index')
             ->with('success', 'Data wilayah tugas berhasil diupdate');
@@ -151,9 +223,14 @@ class WilayahTugasController extends Controller
                 return redirect()->route('wilayahTugas.index')
                     ->with('error', $message);
             }
+            
+            if ($imported == 0 && $skipped > 0 && empty($errors)) {
+                return redirect()->route('wilayahTugas.index')
+                       ->with('warning', "⚠️ Import selesai. {$skipped} data dilewati (kemungkinan duplikat atau tidak valid). Tidak ada data baru yang ditambahkan.");
+            }
 
             return redirect()->route('wilayahTugas.index')
-                ->with('success', 'Import selesai!');
+                ->with('success', 'Import selesai! Tidak ada data baru yang ditambahkan.');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
             $errorMessages = [];

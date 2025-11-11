@@ -11,7 +11,7 @@ class Responden extends Model
 
     protected $table = 'responden';
     protected $primaryKey = 'no';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'id_kec',

@@ -13,6 +13,8 @@ use App\Exports\RespondenTemplateExport;
 use App\Imports\RespondenImport;
 use App\Exports\RespondenExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB; // <-- 1. TAMBAHKAN INI
+use Illuminate\Support\Facades\Log; // <-- 2. TAMBAHKAN INI
 
 class RespondenController extends Controller
 {
@@ -20,32 +22,76 @@ class RespondenController extends Controller
     {
         $query = Responden::with(['kecamatan', 'desa', 'wilayahTugas']);
 
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
+        // Ambil input filter
+        $search = $request->input('search');
+        $selectedYear = $request->input('year');
+        $selectedSemester = $request->input('semester');
+
+        // Filter: Pencarian (DIPERKUAT)
+        if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nama_sample', 'like', "%{$search}%")
                     ->orWhere('id_kec', 'like', "%{$search}%")
                     ->orWhere('id_desa', 'like', "%{$search}%")
-                    ->orWhere('id_nks', 'like', "%{$search}%");
+                    ->orWhere('id_nks', 'like', "%{$search}%")
+                    ->orWhere('id_bs', 'like', "%{$search}%")
+                    ->orWhere('id_nurt', 'like', "%{$search}%")
+                    ->orWhereHas('kecamatan', function ($q) use ($search) {
+                        $q->where('nama_kec', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('desa', function ($q) use ($search) {
+                        $q->where('nama_desa', 'like', "%{$search}%");
+                    });
             });
         }
 
-        $data = $query->paginate(20);
-        return view('responden.responden', compact('data'));
+        // ===== 3. LOGIKA FILTER SEMESTER BARU =====
+        if ($selectedYear) {
+            $query->whereYear('created_at', $selectedYear);
+        }
+
+        if ($selectedSemester) {
+            if ($selectedSemester == 1) {
+                // Semester 1: Januari - Juni
+                $query->whereMonth('created_at', '>=', 1)
+                      ->whereMonth('created_at', '<=', 6);
+            } elseif ($selectedSemester == 2) {
+                // Semester 2: Juli - Desember
+                $query->whereMonth('created_at', '>=', 7)
+                      ->whereMonth('created_at', '<=', 12);
+            }
+        }
+        // ==========================================
+
+        // 4. Ambil data tahun unik untuk dropdown filter
+        $availableYears = DB::table('responden') // <-- Mengambil dari tabel responden
+                            ->select(DB::raw('YEAR(created_at) as year'))
+                            ->whereNotNull('created_at')
+                            ->distinct()
+                            ->orderBy('year', 'desc')
+                            ->pluck('year');
+
+        // 5. Modifikasi paginasi untuk menyimpan parameter filter
+        $data = $query->paginate(20)->appends($request->except('page'));
+
+        // 6. Kirim data ke view
+        return view('responden.responden', compact(
+            'data',
+            'availableYears',
+            'selectedYear',
+            'selectedSemester'
+        ));
     }
+
 
     public function create()
     {
         $kecamatan = Kecamatan::all();
-
-        // Load quest yang aktif
-        // Catatan: Pastikan ConfigQuest::getActiveQuest() mengembalikan array/collection
         $quests = ConfigQuest::where('is_active', true)->orderBy('order')->get();
-
         return view('responden.create', compact('kecamatan', 'quests'));
     }
 
-    // AJAX methods (dibiarkan tidak berubah karena sudah benar)
+    // AJAX methods
     public function getDesaByKecamatan($id_kec)
     {
         $desa = Desa::where('id_kec', $id_kec)->get();
@@ -82,7 +128,6 @@ class RespondenController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi dasar
         $rules = [
             'id_kec' => 'required',
             'id_desa' => 'required',
@@ -92,13 +137,11 @@ class RespondenController extends Controller
             'nama_sample' => 'required|string|max:255',
         ];
 
-        // Dynamic validation berdasarkan quest aktif
         $quests = ConfigQuest::where('is_active', true)->get();
         foreach ($quests as $quest) {
-            // PERBAIKAN: Validasi tipe 'radio' ATAU 'dropdown'
             if (in_array($quest->type, ['radio', 'dropdown'])) {
-                // Pastikan getOptionsArray() mengembalikan array yang benar
-                $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->options);
+                // Asumsi: $quest->options adalah array (via $casts di Model)
+                $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->options ?? []);
             } else {
                 $rules[$quest->key] = 'nullable|string|max:255';
             }
@@ -133,7 +176,6 @@ class RespondenController extends Controller
             ->distinct()
             ->get();
 
-        // Load quest yang aktif
         $quests = ConfigQuest::where('is_active', true)->orderBy('order')->get();
 
         return view('responden.edit', compact('responden', 'kecamatan', 'desa', 'blokSensus', 'nks', 'nurt', 'quests'));
@@ -143,7 +185,6 @@ class RespondenController extends Controller
     {
         $responden = Responden::where('no', $no)->firstOrFail();
 
-        // Validasi dasar
         $rules = [
             'id_kec' => 'required',
             'id_desa' => 'required',
@@ -153,12 +194,11 @@ class RespondenController extends Controller
             'nama_sample' => 'required|string|max:255',
         ];
 
-        // Dynamic validation
         $quests = ConfigQuest::where('is_active', true)->get();
         foreach ($quests as $quest) {
-            // PERBAIKAN: Validasi tipe 'radio' ATAU 'dropdown'
             if (in_array($quest->type, ['radio', 'dropdown'])) {
-                 $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->options);
+                // Asumsi: $quest->options adalah array (via $casts di Model)
+                 $rules[$quest->key] = 'nullable|in:' . implode(',', $quest->options ?? []);
             } else {
                 $rules[$quest->key] = 'nullable|string|max:255';
             }
@@ -183,7 +223,7 @@ class RespondenController extends Controller
             ->with('success', 'Data responden berhasil dihapus');
     }
 
-    // Methods lainnya tetap sama...
+    // Methods Import/Export
     public function downloadTemplate()
     {
         return Excel::download(new RespondenTemplateExport, 'template_responden.xlsx');
@@ -204,17 +244,43 @@ class RespondenController extends Controller
             $err = $importer->getErrors();
 
             if ($ok > 0 && empty($err)) {
-                return back()->with('success', "Import berhasil: $ok data.");
+                return back()->with('success', "✅ Import berhasil: $ok data ditambahkan/diupdate.");
+            }
+            
+            if ($ok > 0 && !empty($err)) {
+                 $msg = "⚠️ Import selesai dengan catatan:\n\n";
+                 $msg .= "✅ Berhasil: {$ok} data\n";
+                 $msg .= "❌ Gagal/Dilewati: {$skip} data\n\n";
+                 $msg .= "Detail Error (maks 5):\n";
+                 $msg .= implode("\n", array_slice($err, 0, 5));
+                 return back()->with('warning', $msg);
             }
 
-            if (!empty($err)) {
-                $msg = "Import {$ok} berhasil, {$skip} gagal.\n" . implode("\n", array_slice($err, 0, 5));
-                return back()->with('warning', $msg);
+            if ($ok == 0 && !empty($err)) {
+                 $msg = "❌ Import gagal! Tidak ada data yang berhasil diimport.\n\n";
+                 $msg .= "Detail Error (maks 5):\n";
+                 $msg .= implode("\n", array_slice($err, 0, 5));
+                 return back()->with('error', $msg);
             }
 
-            return back()->with('error', "Import gagal!\n" . implode("\n", $err));
+             if ($ok == 0 && $skip > 0 && empty($err)) {
+                return back()->with('warning', "⚠️ Import selesai. {$skip} data dilewati (kemungkinan duplikat). Tidak ada data baru yang ditambahkan.");
+            }
+
+            return back()->with('success', 'Import selesai! Tidak ada data baru yang ditambahkan.');
+
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+             $failures = $e->failures();
+             $errorMessages = [];
+             foreach ($failures as $failure) {
+                 $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+             }
+             $message = "❌ Validasi Excel gagal!\n\n";
+             $message .= implode("\n", array_slice($errorMessages, 0, 10));
+             return back()->with('error', $message);
         } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+            Log::error('Import Exception: ' . $e->getMessage());
+            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
         }
     }
 

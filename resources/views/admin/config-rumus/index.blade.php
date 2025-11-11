@@ -230,12 +230,6 @@
             threshold: 0.1
         });
         
-        document.querySelectorAll('.fade-in').forEach(element => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(10px)';
-            element.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-            observer.observe(element);
-        });
 
         // ===================================
         // Bootstrap Tooltip
