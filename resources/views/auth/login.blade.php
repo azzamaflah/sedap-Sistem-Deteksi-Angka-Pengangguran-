@@ -32,8 +32,8 @@
 
             <!-- Tulisan selamat datang di pojok kiri bawah -->
             <div class="absolute bottom-8 left-8 z-10 max-w-md">
-                <h2 class="text-4xl font-bold text-white mb-4 drop-shadow-lg">Selamat Datang di SEDAP</h2>
-                <p class="text-white text-lg drop-shadow-md">Sistem Deteksi Angka Pengangguran</p>
+                <h2 class="text-4xl font-bold text-orange mb-4 drop-shadow-lg">Selamat Datang di SEDAP</h2>
+                <p class="text-orange text-lg drop-shadow-md">Sistem Deteksi Angka Pengangguran</p>
             </div>
         </div>
         <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
