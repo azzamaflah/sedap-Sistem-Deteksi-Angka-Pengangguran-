@@ -349,6 +349,7 @@
 
         /* Responsive */
         @media (max-width: 992px) {
+
             /* Ubah breakpoint ke lg */
             .btn-action-group {
                 flex-direction: column;
@@ -372,38 +373,42 @@
 
         @media (min-width: 992px) {
 
-            /* * State 1: SIDEBAR EXPANDED (Default / body:not(.toggle-sidebar)) 
-             * Kita perkecil padding dan font-size tombol
-             */
+            /* * State 1: SIDEBAR EXPANDED (Default / body:not(.toggle-sidebar))
+                 * Kita perkecil padding dan font-size tombol
+                 */
             body:not(.toggle-sidebar) .btn-action-group .btn-custom {
-                padding: 0.4rem 0.8rem; /* Padding dikecilkan */
-                font-size: 0.8rem;      /* Font dikecilkan */
+                padding: 0.4rem 0.8rem;
+                /* Padding dikecilkan */
+                font-size: 0.8rem;
+                /* Font dikecilkan */
                 letter-spacing: 0.2px;
             }
 
             /* Perkecil juga ikonnya */
             body:not(.toggle-sidebar) .btn-action-group .btn-custom i {
-                font-size: 0.9rem; /* Ukuran ikon dikecilkan */
-                margin-right: 0.3rem; /* Jarak ikon ke teks dikurangi */
+                font-size: 0.9rem;
+                /* Ukuran ikon dikecilkan */
+                margin-right: 0.3rem;
+                /* Jarak ikon ke teks dikurangi */
             }
 
             /* * State 2: SIDEBAR COLLAPSED (body.toggle-sidebar)
-             * Kembalikan ke ukuran normal (pastikan nilai ini SAMA dengan style .btn-custom Anda)
-             */
+                 * Kembalikan ke ukuran normal (pastikan nilai ini SAMA dengan style .btn-custom Anda)
+                 */
             body.toggle-sidebar .btn-action-group .btn-custom {
                 /* Sesuaikan nilai padding & font-size ini agar sama dgn style .btn-custom awal */
-                padding: 0.6rem 1.1rem; 
-                font-size: 0.9rem;      
+                padding: 0.6rem 1.1rem;
+                font-size: 0.9rem;
                 letter-spacing: 0.3px;
             }
 
             body.toggle-sidebar .btn-action-group .btn-custom i {
-                font-size: 1rem; /* Ukuran ikon normal */
-                margin-right: 0.4rem; /* Jarak ikon ke teks normal */
+                font-size: 1rem;
+                /* Ukuran ikon normal */
+                margin-right: 0.4rem;
+                /* Jarak ikon ke teks normal */
             }
         }
-
-        
     </style>
 @endsection
 
@@ -443,8 +448,7 @@
                             {{-- Search Bar (diambil dari search-wrapper) --}}
                             <div class="search-wrapper flex-grow-1" style="min-width: 250px;">
                                 <input type="text" name="search" id="searchInput" class="form-control"
-                                    placeholder="Cari kec, desa, nks, pengawas..."
-                                    value="{{ $search ?? old('search') }}">
+                                    placeholder="Cari kec, desa, nks, pengawas..." value="{{ $search ?? old('search') }}">
                                 <i class="bi bi-search search-icon"></i>
 
                                 {{-- Tombol Clear ini sekarang akan me-reset semua filter --}}
@@ -462,8 +466,7 @@
                                     <option value="">Semua Tahun</option>
                                     @isset($availableYears)
                                         @foreach ($availableYears as $year)
-                                            <option value="{{ $year }}"
-                                                {{ $selectedYear == $year ? 'selected' : '' }}>
+                                            <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
                                                 Tahun {{ $year }}
                                             </option>
                                         @endforeach
@@ -495,7 +498,7 @@
                     {{-- Kolom Tombol Aksi --}}
                     <div class="col-lg-5 col-md-12">
                         <div class="btn-action-group justify-content-lg-end">
-                            
+
                             {{-- ✅ PERUBAHAN 1 --}}
                             <button type="button" class="btn btn-custom btn-import" data-bs-toggle="modal"
                                 data-bs-target="#modalImport" data-bs-toggle="tooltip" title="Import data dari Excel">
